@@ -6,7 +6,7 @@ function Backdrop(): JSX.Element {
     <BackdropContainer>
       <Ball
         style={{
-          backgroundColor: "orange",
+          backgroundColor: "#ffed99",
           top: '10%',
           left: 0,
         }}
