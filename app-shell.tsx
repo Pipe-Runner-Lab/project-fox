@@ -1,12 +1,13 @@
 import React from "react";
 import Backdrop from "./components/backdrop";
+import Navbar from "./components/navbar";
+
 import {
   AppShellContainer,
   AppShellWrapper,
   NavStage,
   ContentStage,
 } from "./app-shell.styles";
-import Navbar from "../navbar";
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -17,9 +18,7 @@ function AppShell({ children }: AppShellProps): JSX.Element {
     <AppShellContainer>
       <Backdrop />
       <AppShellWrapper>
-        <NavStage>
-          <Navbar />
-        </NavStage>
+        <NavStage><Navbar /></NavStage>
         <ContentStage>{children}</ContentStage>
       </AppShellWrapper>
     </AppShellContainer>
@@ -27,3 +26,4 @@ function AppShell({ children }: AppShellProps): JSX.Element {
 }
 
 export default AppShell;
+
