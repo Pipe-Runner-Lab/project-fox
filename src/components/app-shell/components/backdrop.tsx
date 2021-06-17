@@ -7,7 +7,7 @@ function Backdrop(): JSX.Element {
       <Ball
         style={{
           backgroundColor: "#ffed99",
-          top: '10%',
+          top: "10%",
           left: 0,
         }}
       />
@@ -15,14 +15,14 @@ function Backdrop(): JSX.Element {
         style={{
           backgroundColor: "#f6b8b8",
           top: 0,
-          left: '15%',
+          left: "15%",
         }}
       />
       <Ball
         style={{
           backgroundColor: "#ac66cc",
           bottom: 0,
-          left: '20%',
+          left: "20%",
         }}
       />
     </BackdropContainer>
