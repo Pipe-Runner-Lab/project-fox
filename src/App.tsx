@@ -1,7 +1,7 @@
-import React from "react";
-import AppShell from "./components/app-shell";
+import React from 'react';
+import AppShell from './components/app-shell';
 
-function App() {
+function App(): JSX.Element {
   return <AppShell>Child</AppShell>;
 }
 

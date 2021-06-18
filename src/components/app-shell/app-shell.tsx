@@ -1,12 +1,8 @@
-import React from "react";
-import Backdrop from "./components/backdrop";
-import {
-  AppShellContainer,
-  AppShellWrapper,
-  NavStage,
-  ContentStage,
-} from "./app-shell.styles";
-import Navbar from "../navbar";
+import React from 'react';
+import Backdrop from './components/backdrop';
+import { AppShellContainer, AppShellWrapper, NavStage, ContentStage } from './app-shell.styles';
+import Navbar from '../navbar';
+
 type AppShellProps = {
   children: React.ReactNode;
 };

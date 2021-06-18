@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const NavbarContainer = styled.div`
   display: flex;
@@ -55,7 +55,7 @@ export const AvatarWrapper = styled.div`
   }
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     background-color: #ede9fe;
     height: 50px;
