@@ -1,5 +1,8 @@
 import React from "react";
 import Backdrop from "./components/backdrop";
+import SignIn from "./firebase/signin";
+import SignOut from "./firebase/signout";
+import {handlesignin, handlesignout} from "./firebase/firebaseconfig";
 import {
   AppShellContainer,
   AppShellWrapper,
@@ -16,7 +19,10 @@ function AppShell({ children }: AppShellProps): JSX.Element {
     <AppShellContainer>
       <Backdrop />
       <AppShellWrapper>
-        <NavStage>Nav</NavStage>
+        <NavStage>
+          <SignIn handlesignin={handlesignin}/>
+          <SignOut handlesignout={handlesignout}/>
+        </NavStage>
         <ContentStage>{children}</ContentStage>
       </AppShellWrapper>
     </AppShellContainer>
