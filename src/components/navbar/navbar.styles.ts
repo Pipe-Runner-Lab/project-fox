@@ -8,12 +8,6 @@ export const NavbarContainer = styled.div`
   justify-content: space-between;
 `;
 
-export const PrimaryIconContainer = styled.div`
-  & > * + * {
-    margin-top: 8px;
-  }
-`;
-
 export const IconWrapper = styled.div<{ active?: boolean }>`
   height: 56px;
   width: 56px;
@@ -25,11 +19,19 @@ export const IconWrapper = styled.div<{ active?: boolean }>`
   border-radius: 6px;
   cursor: pointer;
 
-  &:not(.active):hover {
+  transition: all 0.2s linear;
+`;
+
+export const PrimaryIconContainer = styled.div`
+  & > * + * {
+    margin-top: 8px;
+  }
+
+  & :not(.active) ${IconWrapper}:hover {
     color: #6b7280;
   }
 
-  &.active {
+  & .active ${IconWrapper} {
     color: #7c3aed;
     background-color: #ffffff;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;

@@ -1,13 +1,10 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import Backdrop from './components/backdrop';
 import { AppShellContainer, AppShellWrapper, NavStage, ContentStage } from './app-shell.styles';
 import Navbar from '../navbar';
 
-type AppShellProps = {
-  children: React.ReactNode;
-};
-
-function AppShell({ children }: AppShellProps): JSX.Element {
+function AppShell(): JSX.Element {
   return (
     <AppShellContainer>
       <Backdrop />
@@ -15,7 +12,9 @@ function AppShell({ children }: AppShellProps): JSX.Element {
         <NavStage>
           <Navbar />
         </NavStage>
-        <ContentStage>{children}</ContentStage>
+        <ContentStage>
+          <Outlet />
+        </ContentStage>
       </AppShellWrapper>
     </AppShellContainer>
   );
