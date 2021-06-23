@@ -4,6 +4,7 @@ import Dashboard from 'pages/dashboard';
 import Settings from 'pages/settings';
 import Canvas from 'pages/canvas';
 import Auth from 'pages/auth';
+import AuthProvider from 'provider/auth';
 import AppShell from './components/app-shell';
 
 function App(): JSX.Element {
