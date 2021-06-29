@@ -1,0 +1,26 @@
+.pixel-dust-stage {
+  background-color: #444444;
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+.pixel-dust-canvas-container {
+  position: relative;
+  background-color: #ffffff;
+  --stage-pos-x: 0;
+  --stage-pos-y: 0;
+  transform: translateX(calc(var(--stage-pos-x) * 1px)) translateY(calc(var(--stage-pos-y) * 1px));
+  will-change: transform;
+}
+
+.pixel-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

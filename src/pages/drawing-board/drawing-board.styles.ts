@@ -17,14 +17,8 @@ export const DrawingBoardContainer = styled.div`
 
 export const CanvasWrapper = styled.div`
   flex: 1;
-  overflow: hidden;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background-color: #343a40;
   border: 1px #e1e8eb solid;
+  overflow: hidden;
 `;
 
 export const ToolBoxWrapper = styled.div`
