@@ -1,5 +1,6 @@
 import React from 'react';
 import { PixelDustBoard } from 'pixel-dust';
+import ToolBox from 'components/toolbox';
 import {
   DrawingBoardContainer,
   CanvasWrapper,
@@ -10,7 +11,9 @@ import {
 function DrawingBoard(): JSX.Element {
   return (
     <DrawingBoardContainer>
-      <ToolBoxWrapper />
+      <ToolBoxWrapper>
+        <ToolBox />
+      </ToolBoxWrapper>
       <CanvasWrapper>
         <PixelDustBoard />
       </CanvasWrapper>
