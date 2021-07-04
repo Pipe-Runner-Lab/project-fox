@@ -4,7 +4,8 @@ export enum CommandType {
   DRAW = 'DRAW',
   ERASE = 'ERASE',
   ADD_LAYER = 'ADD_LAYER',
-  DELETE_LAYER = 'DELETE_LAYER'
+  DELETE_LAYER = 'DELETE_LAYER',
+  FILL = 'FILL'
 }
 
 export class DrawCommand {
@@ -33,5 +34,20 @@ export class EraseCommand {
   constructor(u: number, v: number) {
     this.u = u;
     this.v = v;
+  }
+}
+export class FillCommand {
+  type = CommandType.FILL;
+
+  u: number;
+
+  v: number;
+
+  color: string;
+
+  constructor(u: number, v: number, color: string) {
+    this.u = u;
+    this.v = v;
+    this.color = color;
   }
 }

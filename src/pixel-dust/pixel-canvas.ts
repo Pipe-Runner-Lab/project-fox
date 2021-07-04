@@ -15,7 +15,9 @@ class PixelCanvas {
 
   canvasType: CanvasType;
 
-  constructor(canvasType: CanvasType, dimension: number, mountTarget: HTMLDivElement, id?: string) {
+  fillarr: ArrayConstructor;
+
+  constructor(canvasType: number, dimension: number, mountTarget: HTMLDivElement, id?: string) {
     this.dimension = dimension;
     this.canvasType = canvasType;
     this.tileDimension = dimension / canvasType;
@@ -33,6 +35,8 @@ class PixelCanvas {
     } else {
       throw Error('Context is null');
     }
+    const fillarr = Array.from(Array(this.canvasType), () => new Array(this.canvasType));
+    this.fillarr = Array;
   }
 
   deRegister(mountTarget: HTMLDivElement): void {
@@ -47,6 +51,16 @@ class PixelCanvas {
       this.tileDimension,
       this.tileDimension
     );
+  }
+
+  fill(u: number, v: number, color: string): void {
+    this.ctx.fillStyle = color;
+    // this.ctx.fillRect(
+    //   Math.round(Math.floor(u * this.canvasType) * this.tileDimension),
+    //   Math.round(Math.floor(v * this.canvasType) * this.tileDimension),
+    //   this.tileDimension,
+    //   this.tileDimension
+    // );
   }
 }
 
