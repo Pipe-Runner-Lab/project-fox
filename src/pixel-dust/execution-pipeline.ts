@@ -1,4 +1,4 @@
-import { CommandType, DrawCommand, EraseCommand } from './command';
+import { CommandType, DrawCommand, EraseCommand, FillCommand } from './command';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
 
@@ -34,6 +34,9 @@ class ExecutionPipeline {
     switch (command.type) {
       case CommandType.DRAW:
         activeLayer.pixelCanvas.draw(command.u, command.v, (command as DrawCommand).color);
+        break;
+      case CommandType.FILL:
+        activeLayer.pixelCanvas.fill(command.u, command.v, (command as FillCommand).color);
         break;
 
       default:

@@ -15,7 +15,15 @@ class PixelCanvas {
 
   canvasType: CanvasType;
 
-  constructor(canvasType: CanvasType, dimension: number, mountTarget: HTMLDivElement, id?: string) {
+  matrix: string[][];
+
+  constructor(
+    canvasType: CanvasType,
+    dimension: number,
+    mountTarget: HTMLDivElement,
+    matrix: string[][],
+    id?: string
+  ) {
     this.dimension = dimension;
     this.canvasType = canvasType;
     this.tileDimension = dimension / canvasType;
@@ -23,6 +31,7 @@ class PixelCanvas {
     this.canvas.classList.add('pixel-canvas');
     this.canvas.height = dimension;
     this.canvas.width = dimension;
+    this.matrix = Array.from(Array(this.canvasType), () => new Array(this.canvasType));
     if (id) this.canvas.setAttribute('id', id);
 
     mountTarget.appendChild(this.canvas);
@@ -39,6 +48,19 @@ class PixelCanvas {
     mountTarget.removeChild(this.canvas);
   }
 
+  updatematrix(u: number, v: number, color: string): void {
+    if (color === 'Transparent') {
+      this.matrix[Math.round(Math.floor(u * this.canvasType) * this.tileDimension)][
+        Math.round(Math.floor(v * this.canvasType) * this.tileDimension)
+      ] = '0';
+    } else if (color === 'color') {
+      this.matrix[Math.round(Math.floor(u * this.canvasType) * this.tileDimension)][
+        Math.round(Math.floor(v * this.canvasType) * this.tileDimension)
+      ] = '1';
+      console.log(this.matrix);
+    }
+  }
+
   draw(u: number, v: number, color: string): void {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
@@ -47,6 +69,13 @@ class PixelCanvas {
       this.tileDimension,
       this.tileDimension
     );
+    this.updatematrix(u, v, color);
+  }
+
+  fill(u: number, v: number, color: string): void {
+    this.ctx.fillStyle = color;
+    // No content for now.
+    this.draw(u, v, color);
   }
 }
 
