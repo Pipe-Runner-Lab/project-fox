@@ -22,7 +22,7 @@ function DrawingBoard(): JSX.Element {
   const onLayerStackChange = useCallback((_layerStack: Layer[]): void => {
     setLayerStack([..._layerStack]);
   }, []);
-  const onActiveLayerChange = useCallback((_activeLayer: Layer): void => {
+  const onActiveLayerChange = useCallback((_activeLayer: Layer | null): void => {
     setActiveLayer(_activeLayer);
   }, []);
 
@@ -36,6 +36,13 @@ function DrawingBoard(): JSX.Element {
   const setActiveLayerOnEngine = useCallback(
     (arg: { uuid: string }): void => {
       pixelDustBoardRef.current?.pixelDustApi?.setActiveLayer(arg);
+    },
+    [pixelDustBoardRef]
+  );
+
+  const deleteLayerOnEngine = useCallback(
+    (arg: { uuid: string | undefined }): void => {
+      pixelDustBoardRef.current?.pixelDustApi?.deleteLayer(arg);
     },
     [pixelDustBoardRef]
   );
@@ -61,6 +68,7 @@ function DrawingBoard(): JSX.Element {
         <LayerBox
           addLayerAfter={addLayerAfterOnEngine}
           setActiveLayer={setActiveLayerOnEngine}
+          deleteLayer={deleteLayerOnEngine}
           layerStack={layerStack}
           activeLayer={activeLayer}
         />

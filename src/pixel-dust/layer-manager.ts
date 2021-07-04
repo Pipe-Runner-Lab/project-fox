@@ -25,7 +25,7 @@ class LayerManager {
 
   layerStackUpdateCB: undefined | ((arg: Layer[]) => void) = undefined;
 
-  activeLayerUpdateCB: undefined | ((arg: Layer) => void) = undefined;
+  activeLayerUpdateCB: undefined | ((arg: Layer | null) => void) = undefined;
 
   constructor(options: LayerManagerProps) {
     this.layerStack = [];
@@ -34,18 +34,23 @@ class LayerManager {
     this.canvasContainerElement = options.canvasContainerElement;
   }
 
-  setActiveLayer({ uuid }: { uuid: string }): void {
-    const filterOutput = this.layerStack.filter((layer) => layer.uuid === uuid);
+  setActiveLayer(arg: { uuid: string } | null): void {
+    if (arg) {
+      const filterOutput = this.layerStack.filter((layer) => layer.uuid === arg.uuid);
 
-    if (filterOutput.length > 1) {
-      throw Error('uuid matches more than one layer');
-    } else if (filterOutput.length < 1) {
-      throw Error('uuid does not match any layer');
+      if (filterOutput.length > 1) {
+        throw Error('uuid matches more than one layer');
+      } else if (filterOutput.length < 1) {
+        throw Error('uuid does not match any layer');
+      } else {
+        const [layer] = filterOutput;
+        this.activeLayer = layer;
+      }
     } else {
-      const [layer] = filterOutput;
-      this.activeLayer = layer;
-      if (this.activeLayerUpdateCB) this.activeLayerUpdateCB(this.activeLayer);
+      this.activeLayer = null;
     }
+
+    if (this.activeLayerUpdateCB) this.activeLayerUpdateCB(this.activeLayer);
   }
 
   getActiveLayer(): Layer | null {
@@ -101,6 +106,22 @@ class LayerManager {
       });
     }
     // TODO
+  }
+
+  deleteLayer(arg: { uuid: string | undefined }): void {
+    if (arg.uuid) {
+      const [selectedLayer, ...rest] = this.layerStack.filter((layer) => layer.uuid === arg.uuid);
+      if (rest.length > 0) {
+        throw Error('uuid matches more than one layer');
+      }
+      if (!selectedLayer) {
+        throw Error('uuid does not match any layer');
+      }
+      selectedLayer.pixelCanvas.deRegister(this.canvasContainerElement);
+      this.layerStack = this.layerStack.filter((layer) => layer.uuid !== selectedLayer.uuid);
+      if (this.layerStackUpdateCB) this.layerStackUpdateCB(this.layerStack);
+      this.setActiveLayer(null);
+    }
   }
 }
 

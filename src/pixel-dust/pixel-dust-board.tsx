@@ -5,7 +5,7 @@ type PixelDustBoardProps = {
   foregroundColor: string;
   backgroundColor: string;
   onLayerStackChange: (layerStack: Layer[]) => void;
-  onActiveLayerChange: (layer: Layer) => void;
+  onActiveLayerChange: (layer: Layer | null) => void;
 };
 
 type PixelDustBoardState = Record<string, undefined>;

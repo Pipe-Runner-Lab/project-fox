@@ -32,4 +32,3 @@
   },
   "ignorePatterns": [".eslintrc.js", "next.config.js"]
 }
-

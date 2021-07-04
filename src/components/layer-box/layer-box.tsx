@@ -19,13 +19,15 @@ type LayerBoxProps = {
   activeLayer: Layer | null;
   addLayerAfter: (arg?: { uuid?: string }) => void;
   setActiveLayer: (arg: { uuid: string }) => void;
+  deleteLayer: (arg: { uuid: string | undefined }) => void;
 };
 
 function LayerBox({
   layerStack,
   activeLayer,
   addLayerAfter,
-  setActiveLayer
+  setActiveLayer,
+  deleteLayer
 }: LayerBoxProps): JSX.Element {
   return (
     <LayerContainer>
@@ -34,7 +36,7 @@ function LayerBox({
           <AddLayerIcon />
         </AddLayerButton>
         <Divider />
-        <DeleteLayerButton>
+        <DeleteLayerButton onClick={() => deleteLayer({ uuid: activeLayer?.uuid })}>
           <DeleteLayerIcon />
         </DeleteLayerButton>
       </LayerInteractionContainer>

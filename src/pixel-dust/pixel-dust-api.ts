@@ -8,7 +8,7 @@ export type PixelDustApiProps = {
   canvasType?: CanvasType;
   initializeWithLayer?: boolean;
   layerStackUpdateCB?: (layerStack: Layer[]) => void;
-  activeLayerUpdateCB?: (layerStack: Layer) => void;
+  activeLayerUpdateCB?: (layerStack: Layer | null) => void;
 };
 
 class PixelDustApi {
@@ -49,6 +49,10 @@ class PixelDustApi {
 
   setActiveLayer(arg: { uuid: string }): void {
     this.pixelDustEngine.layerManager?.setActiveLayer(arg);
+  }
+
+  deleteLayer(arg: { uuid: string | undefined }): void {
+    this.pixelDustEngine.layerManager?.deleteLayer(arg);
   }
 }
 

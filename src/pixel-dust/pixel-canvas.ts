@@ -35,6 +35,10 @@ class PixelCanvas {
     }
   }
 
+  deRegister(mountTarget: HTMLDivElement): void {
+    mountTarget.removeChild(this.canvas);
+  }
+
   draw(u: number, v: number, color: string): void {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
