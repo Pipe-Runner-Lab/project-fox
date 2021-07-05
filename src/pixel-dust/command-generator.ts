@@ -11,6 +11,10 @@ class CommandGenerator {
   draw(u: number, v: number, color: string): void {
     this.canvasCommandStream.next(new DrawCommand(u, v, color));
   }
+
+  erase(u: number, v: number): void {
+    this.canvasCommandStream.next(new EraseCommand(u, v));
+  }
 }
 
 export default CommandGenerator;

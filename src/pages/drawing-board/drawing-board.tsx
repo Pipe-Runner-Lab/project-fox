@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { PixelDustBoard } from 'pixel-dust';
 import ToolBox from 'components/tool-box';
 import LayerBox from 'components/layer-box';
-import { Layer } from 'pixel-dust/pixel-dust-api';
+import { Layer, InstrumentType } from 'pixel-dust/pixel-dust-api';
 import {
   DrawingBoardContainer,
   CanvasWrapper,
@@ -13,6 +13,7 @@ import {
 function DrawingBoard(): JSX.Element {
   const pixelDustBoardRef = useRef<PixelDustBoard>(null);
 
+  const [activeInstrument, setActiveInstrument] = useState<InstrumentType>(InstrumentType.PEN);
   const [activeForegroundRGBA, setActiveForegroundRGBA] = useState<string>('#000000');
   const [activeBackgroundRGBA, setActiveBackgroundRGBA] = useState<string>('#ffffff');
 
@@ -44,6 +45,8 @@ function DrawingBoard(): JSX.Element {
     <DrawingBoardContainer>
       <ToolBoxWrapper>
         <ToolBox
+          instrument={activeInstrument}
+          onChangeInstrument={setActiveInstrument}
           onChangeForegroundColor={setActiveForegroundRGBA}
           onChangeBackgroundColor={setActiveBackgroundRGBA}
         />
@@ -51,6 +54,7 @@ function DrawingBoard(): JSX.Element {
       <CanvasWrapper>
         <PixelDustBoard
           ref={pixelDustBoardRef}
+          instrument={activeInstrument}
           foregroundColor={activeForegroundRGBA}
           backgroundColor={activeBackgroundRGBA}
           onLayerStackChange={onLayerStackChange}

@@ -1,4 +1,4 @@
-import PixelDustEngine from './pixel-dust-engine';
+import PixelDustEngine, { InstrumentType } from './pixel-dust-engine';
 import { CanvasType } from './pixel-canvas';
 import { Layer } from './layer-manager';
 
@@ -43,6 +43,10 @@ class PixelDustApi {
     this.pixelDustEngine.drawingState.backgroundColor = color;
   }
 
+  setInstrumentType(instrument: InstrumentType): void {
+    this.pixelDustEngine.drawingState.instrument = instrument;
+  }
+
   addLayerAfter(arg?: { uuid?: string }): void {
     this.pixelDustEngine.layerManager?.addLayerAfter(arg);
   }
@@ -52,6 +56,6 @@ class PixelDustApi {
   }
 }
 
-export { CanvasType };
+export { CanvasType, InstrumentType };
 export type { Layer };
 export default PixelDustApi;
