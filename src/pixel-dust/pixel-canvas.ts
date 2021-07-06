@@ -46,8 +46,7 @@ class PixelCanvas {
   }
 
   erase(u: number, v: number): void {
-    this.ctx.fillStyle = '#ffffff';
-    this.ctx.fillRect(
+    this.ctx.clearRect(
       Math.round(Math.floor(u * this.canvasType) * this.tileDimension),
       Math.round(Math.floor(v * this.canvasType) * this.tileDimension),
       this.tileDimension,
