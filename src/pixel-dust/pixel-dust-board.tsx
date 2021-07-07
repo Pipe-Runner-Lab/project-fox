@@ -1,9 +1,10 @@
 import React from 'react';
-import PixelDustApi, { Layer } from './pixel-dust-api';
+import PixelDustApi, { Layer, InstrumentType } from './pixel-dust-api';
 
 type PixelDustBoardProps = {
   foregroundColor: string;
   backgroundColor: string;
+  instrument: InstrumentType;
   onLayerStackChange: (layerStack: Layer[]) => void;
   onActiveLayerChange: (layer: Layer | null) => void;
 };
@@ -34,12 +35,15 @@ class PixelDustBoard extends React.Component<PixelDustBoardProps, PixelDustBoard
   }
 
   shouldComponentUpdate(nextProps: PixelDustBoardProps): boolean {
-    const { foregroundColor, backgroundColor } = this.props;
+    const { foregroundColor, backgroundColor, instrument } = this.props;
     if (foregroundColor !== nextProps.foregroundColor) {
       this.pixelDustApi?.setForegroundColor(nextProps.foregroundColor);
     }
     if (backgroundColor !== nextProps.backgroundColor) {
       this.pixelDustApi?.setBackgroundColor(nextProps.backgroundColor);
+    }
+    if (instrument !== nextProps.instrument) {
+      this.pixelDustApi?.setInstrumentType(nextProps.instrument);
     }
     return false;
   }

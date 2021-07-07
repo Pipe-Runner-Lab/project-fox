@@ -36,6 +36,10 @@ class ExecutionPipeline {
         activeLayer.pixelCanvas.draw(command.u, command.v, (command as DrawCommand).color);
         break;
 
+      case CommandType.ERASE:
+        activeLayer.pixelCanvas.erase(command.u, command.v);
+        break;
+
       default:
         break;
     }

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { CirclePicker, SliderPicker, SketchPicker, ColorResult } from 'react-color';
+import { InstrumentType } from 'pixel-dust/pixel-dust-api';
 import {
   RiPencilFill as PenIcon,
   RiPaintFill as BucketIcon,
@@ -28,26 +29,19 @@ enum ActiveColorType {
   BACKGROUND = 'BACKGROUND'
 }
 
-enum ActiveInstrumentType {
-  PEN = 'PEN',
-  RANDOM_WIDTH_PEN = 'RANDOM_WIDTH_PEN',
-  BUCKET = 'BUCKET',
-  ERASER = 'ERASER',
-  PIXEL_SQUARE = 'PIXEL_SQUARE',
-  PIXEL_CIRCLE = 'PIXEL_CIRCLE',
-  PIXEL_FRAME = 'PIXEL_FRAME',
-  COLOR_PICKER = 'COLOR_PICKER'
-}
-
 type ToolBoxProps = {
   onChangeForegroundColor: React.Dispatch<React.SetStateAction<string>>;
   onChangeBackgroundColor: React.Dispatch<React.SetStateAction<string>>;
+  onChangeInstrument: React.Dispatch<React.SetStateAction<InstrumentType>>;
+  instrument: InstrumentType;
 };
 
-function ToolBox({ onChangeForegroundColor, onChangeBackgroundColor }: ToolBoxProps): JSX.Element {
-  const [activeInstrumentType, setActiveInstrumentType] = useState<ActiveInstrumentType>(
-    ActiveInstrumentType.PEN
-  );
+function ToolBox({
+  instrument,
+  onChangeForegroundColor,
+  onChangeBackgroundColor,
+  onChangeInstrument
+}: ToolBoxProps): JSX.Element {
   const [activeColorType, setActiveColorType] = useState<ActiveColorType>(
     ActiveColorType.FOREGROUND
   );
@@ -95,43 +89,43 @@ function ToolBox({ onChangeForegroundColor, onChangeBackgroundColor }: ToolBoxPr
     <>
       <InstrumentBoxContainer>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.PEN}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.PEN)}>
+          active={instrument === InstrumentType.PEN}
+          onClick={() => onChangeInstrument(InstrumentType.PEN)}>
           <PenIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.RANDOM_WIDTH_PEN}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.RANDOM_WIDTH_PEN)}>
+          active={instrument === InstrumentType.RANDOM_WIDTH_PEN}
+          onClick={() => onChangeInstrument(InstrumentType.RANDOM_WIDTH_PEN)}>
           <RandomWidthPenIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.ERASER}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.ERASER)}>
+          active={instrument === InstrumentType.ERASER}
+          onClick={() => onChangeInstrument(InstrumentType.ERASER)}>
           <EraserIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.BUCKET}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.BUCKET)}>
+          active={instrument === InstrumentType.BUCKET}
+          onClick={() => onChangeInstrument(InstrumentType.BUCKET)}>
           <BucketIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.PIXEL_SQUARE}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.PIXEL_SQUARE)}>
+          active={instrument === InstrumentType.PIXEL_SQUARE}
+          onClick={() => onChangeInstrument(InstrumentType.PIXEL_SQUARE)}>
           <PixelSquareIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.PIXEL_CIRCLE}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.PIXEL_CIRCLE)}>
+          active={instrument === InstrumentType.PIXEL_CIRCLE}
+          onClick={() => onChangeInstrument(InstrumentType.PIXEL_CIRCLE)}>
           <PixelCircleIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.PIXEL_FRAME}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.PIXEL_FRAME)}>
+          active={instrument === InstrumentType.PIXEL_FRAME}
+          onClick={() => onChangeInstrument(InstrumentType.PIXEL_FRAME)}>
           <PixelFrameIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={activeInstrumentType === ActiveInstrumentType.COLOR_PICKER}
-          onClick={() => setActiveInstrumentType(ActiveInstrumentType.COLOR_PICKER)}>
+          active={instrument === InstrumentType.COLOR_PICKER}
+          onClick={() => onChangeInstrument(InstrumentType.COLOR_PICKER)}>
           <ColorPickerIcon />
         </InstrumentButton>
       </InstrumentBoxContainer>

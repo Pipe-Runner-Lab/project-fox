@@ -5,6 +5,17 @@ import LayerManager from './layer-manager';
 import { CanvasType } from './pixel-canvas';
 import './pixel-dust.css';
 
+export enum InstrumentType {
+  PEN = 'PEN',
+  RANDOM_WIDTH_PEN = 'RANDOM_WIDTH_PEN',
+  BUCKET = 'BUCKET',
+  ERASER = 'ERASER',
+  PIXEL_SQUARE = 'PIXEL_SQUARE',
+  PIXEL_CIRCLE = 'PIXEL_CIRCLE',
+  PIXEL_FRAME = 'PIXEL_FRAME',
+  COLOR_PICKER = 'COLOR_PICKER'
+}
+
 type PixelDustEngineProps = {
   mountTarget: HTMLDivElement;
   dimension: number;
@@ -38,7 +49,8 @@ class PixelDustEngine {
 
   drawingState = {
     foregroundColor: 'black',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    instrument: InstrumentType.PEN
   };
 
   computationCache = {
@@ -111,7 +123,16 @@ class PixelDustEngine {
         const { top, left, width, height } = this.containerPosition;
         const u = (x - left) / width;
         const v = (y - top) / height;
-        this.commandGenerator?.draw(u, v, this.drawingState.foregroundColor);
+        switch (this.drawingState.instrument) {
+          case InstrumentType.PEN:
+            this.commandGenerator?.draw(u, v, this.drawingState.foregroundColor);
+            break;
+          case InstrumentType.ERASER:
+            this.commandGenerator?.erase(u, v);
+            break;
+          default:
+            break;
+        }
       }
     });
   }
