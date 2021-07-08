@@ -15,7 +15,15 @@ class PixelCanvas {
 
   canvasType: CanvasType;
 
-  constructor(canvasType: CanvasType, dimension: number, mountTarget: HTMLDivElement, id?: string) {
+  matrix: string[][];
+
+  constructor(
+    canvasType: CanvasType,
+    dimension: number,
+    mountTarget: HTMLDivElement,
+    matrix: string[][],
+    id?: string
+  ) {
     this.dimension = dimension;
     this.canvasType = canvasType;
     this.tileDimension = dimension / canvasType;
@@ -23,6 +31,7 @@ class PixelCanvas {
     this.canvas.classList.add('pixel-canvas');
     this.canvas.height = dimension;
     this.canvas.width = dimension;
+    this.matrix = Array.from(Array(this.canvasType), () => new Array(this.canvasType));
     if (id) this.canvas.setAttribute('id', id);
 
     mountTarget.appendChild(this.canvas);
@@ -47,6 +56,7 @@ class PixelCanvas {
       this.tileDimension,
       this.tileDimension
     );
+    this.updatematrix(u, v, color);
   }
 
   erase(u: number, v: number): void {
@@ -56,6 +66,43 @@ class PixelCanvas {
       this.tileDimension,
       this.tileDimension
     );
+    // this.updatematrix(u, v, );
+  }
+
+  updatematrix(u: number, v: number, color: string): void {
+    const a: number = Math.round(Math.floor(u * this.canvasType) * this.tileDimension);
+    const b: number = Math.round(Math.floor(v * this.canvasType) * this.tileDimension);
+    if (color === 'color') {
+      this.matrix[a][b] = '1';
+    } else {
+      this.matrix[a][b] = 'o';
+      console.log(this.matrix);
+    }
+  }
+
+  floodfillutil(matrix: string[][], u: number, v: number, color: string): void {
+    this.ctx.fillStyle = color;
+    if (u < 0 || u >= this.canvasType || v < 0 || v >= this.canvasType) return;
+    if (this.matrix[u][v] !== '0') return;
+    if (this.matrix[u][v] === '1') return;
+    // Replace the color at (u, v)
+    this.matrix[u][v] = '1';
+    // Recursion
+    this.floodfillutil(matrix, u + 1, v, color);
+    this.floodfillutil(matrix, u - 1, v, color);
+    this.floodfillutil(matrix, u, v + 1, color);
+    this.floodfillutil(matrix, u, v - 1, color);
+  }
+
+  floodFill(matrix: string[][], u: number, v: number, color: string): void {
+    this.matrix[u][v] = '0';
+    this.floodfillutil(matrix, u, v, color);
+  }
+
+  fill(matrix: string[][], u: number, v: number, color: string): void {
+    this.ctx.fillStyle = color;
+    this.floodFill(matrix, u, v, color);
+    this.draw(u, v, color);
   }
 }
 

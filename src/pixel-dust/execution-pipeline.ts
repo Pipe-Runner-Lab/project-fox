@@ -1,4 +1,4 @@
-import { CommandType, DrawCommand, EraseCommand } from './command';
+import { CommandType, DrawCommand, EraseCommand, FillCommand } from './command';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
 
@@ -18,7 +18,7 @@ class ExecutionPipeline {
 
     this.commandGenerator.canvasCommandStream.subscribe({
       next: this.canvasCommandObserver.bind(this),
-      error: (error) => console.error(error),
+      error: (error: any) => console.error(error),
       complete: () => console.info('canvas command stream completed')
     });
   }
@@ -39,7 +39,14 @@ class ExecutionPipeline {
       case CommandType.ERASE:
         activeLayer.pixelCanvas.erase(command.u, command.v);
         break;
-
+      case CommandType.FILL:
+        activeLayer.pixelCanvas.fill(
+          (command as FillCommand).matrix,
+          command.u,
+          command.v,
+          (command as FillCommand).color
+        );
+        break;
       default:
         break;
     }
