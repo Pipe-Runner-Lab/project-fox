@@ -28,7 +28,8 @@
     "no-console": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
-    "eol-last": ["error", "always"]
+    "eol-last": ["error", "always"],
+    "prettier/prettier": ["error", { "endOfLine": "auto" }]
   },
   "ignorePatterns": [".eslintrc.js", "next.config.js"]
 }
