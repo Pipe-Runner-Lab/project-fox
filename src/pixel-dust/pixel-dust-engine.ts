@@ -1,20 +1,9 @@
 import CommandGenerator from './command-generator';
-import EventManager, { EventType } from './event-manager';
+import EventManager from './event-manager';
 import ExecutionPipeline from './execution-pipeline';
 import LayerManager from './layer-manager';
 import { CanvasType } from './pixel-canvas';
 import './pixel-dust.css';
-
-export enum InstrumentType {
-  PEN = 'PEN',
-  RANDOM_WIDTH_PEN = 'RANDOM_WIDTH_PEN',
-  BUCKET = 'BUCKET',
-  ERASER = 'ERASER',
-  PIXEL_SQUARE = 'PIXEL_SQUARE',
-  PIXEL_CIRCLE = 'PIXEL_CIRCLE',
-  PIXEL_FRAME = 'PIXEL_FRAME',
-  COLOR_PICKER = 'COLOR_PICKER'
-}
 
 type PixelDustEngineProps = {
   mountTarget: HTMLDivElement;
@@ -47,12 +36,6 @@ class PixelDustEngine {
     width: 0
   };
 
-  drawingState = {
-    foregroundColor: 'black',
-    backgroundColor: 'white',
-    instrument: InstrumentType.PEN
-  };
-
   computationCache = {
     containerX: 0,
     containerY: 0
@@ -76,93 +59,40 @@ class PixelDustEngine {
     stage.appendChild(this.pixelDustCanvasContainer);
     this.mountTarget.appendChild(stage);
 
+    this.resetCoordinates();
+
+    this.eventManager = new EventManager({
+      canvasContainerElement: this.pixelDustCanvasContainer
+    });
+
+    this.eventManager.canvasMove$.subscribe({
+      next: (arg) => {
+        if (arg) {
+          const { x, y } = arg;
+          this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-x', String(x));
+          this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-y', String(y));
+        }
+      },
+      complete: () => {},
+      error: (error) => console.error(error)
+    });
+
     this.layerManager = new LayerManager({
       canvasType,
       canvasContainerElement: this.pixelDustCanvasContainer,
       dimension
     });
 
-    this.resetCoordinates();
-
-    this.commandGenerator = new CommandGenerator();
+    this.commandGenerator = new CommandGenerator({
+      dimension: this.dimension,
+      canvasType,
+      drawStream: this.eventManager.canvasDraw$
+    });
 
     this.executionPipeline = new ExecutionPipeline({
       layerManager: this.layerManager,
       commandGenerator: this.commandGenerator
     });
-
-    this.eventManager = new EventManager({ canvasContainerElement: this.pixelDustCanvasContainer });
-
-    this.eventManager.registerObserver({
-      event: EventType.SPACE_CLICK_DOWN_DRAG,
-      method: this.moveContainer.bind(this)
-    });
-    this.eventManager.registerObserver({
-      event: EventType.SPACE_CLICK_DOWN,
-      method: this.moveContainerStart.bind(this)
-    });
-    this.eventManager.registerObserver({
-      event: EventType.SPACE_CLICK_DOWN_DRAG,
-      method: this.moveContainer.bind(this)
-    });
-    this.eventManager.registerObserver({
-      event: EventType.CLICK_UP,
-      method: this.moveContainerEnd.bind(this)
-    });
-    this.eventManager.registerObserver({
-      event: EventType.SPACE_DOWN,
-      method: () => this.pixelDustCanvasContainer?.style.setProperty('cursor', 'grab')
-    });
-    this.eventManager.registerObserver({
-      event: EventType.SPACE_UP,
-      method: () => this.pixelDustCanvasContainer?.style.setProperty('cursor', 'unset')
-    });
-    this.eventManager.registerObserver({
-      event: EventType.CLICK_DOWN_DRAG,
-      method: (x, y) => {
-        const { top, left, width, height } = this.containerPosition;
-        const u = (x - left) / width;
-        const v = (y - top) / height;
-        switch (this.drawingState.instrument) {
-          case InstrumentType.PEN:
-            this.commandGenerator?.draw(u, v, this.drawingState.foregroundColor);
-            break;
-          case InstrumentType.ERASER:
-            this.commandGenerator?.erase(u, v);
-            break;
-          default:
-            break;
-        }
-      }
-    });
-  }
-
-  moveContainerStart(x: number, y: number): void {
-    this.containerPosition = {
-      ...this.containerPosition,
-      x: Number(this.pixelDustCanvasContainer?.style.getPropertyValue('--stage-pos-x')),
-      y: Number(this.pixelDustCanvasContainer?.style.getPropertyValue('--stage-pos-y'))
-    };
-    this.computationCache = {
-      containerX: x,
-      containerY: y
-    };
-  }
-
-  moveContainer(x: number, y: number): void {
-    this.pixelDustCanvasContainer?.style.setProperty(
-      '--stage-pos-x',
-      String(x - this.computationCache.containerX + this.containerPosition.x)
-    );
-    this.pixelDustCanvasContainer?.style.setProperty(
-      '--stage-pos-y',
-      String(y - this.computationCache.containerY + this.containerPosition.y)
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  moveContainerEnd(x: number, y: number): void {
-    this.resetCoordinates();
   }
 
   resetCoordinates(): void {

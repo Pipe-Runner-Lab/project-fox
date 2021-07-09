@@ -1,4 +1,5 @@
-import PixelDustEngine, { InstrumentType } from './pixel-dust-engine';
+import PixelDustEngine from './pixel-dust-engine';
+import { InstrumentType } from './command-generator';
 import { CanvasType } from './pixel-canvas';
 import { Layer } from './layer-manager';
 
@@ -36,15 +37,18 @@ class PixelDustApi {
   }
 
   setForegroundColor(color: string): void {
-    this.pixelDustEngine.drawingState.foregroundColor = color;
+    if (this.pixelDustEngine.commandGenerator?.drawingState.foregroundColor)
+      this.pixelDustEngine.commandGenerator.drawingState.foregroundColor = color;
   }
 
   setBackgroundColor(color: string): void {
-    this.pixelDustEngine.drawingState.backgroundColor = color;
+    if (this.pixelDustEngine.commandGenerator?.drawingState.backgroundColor)
+      this.pixelDustEngine.commandGenerator.drawingState.backgroundColor = color;
   }
 
   setInstrumentType(instrument: InstrumentType): void {
-    this.pixelDustEngine.drawingState.instrument = instrument;
+    if (this.pixelDustEngine.commandGenerator?.drawingState.instrument)
+      this.pixelDustEngine.commandGenerator.drawingState.instrument = instrument;
   }
 
   addLayerAfter(arg?: { uuid?: string }): void {

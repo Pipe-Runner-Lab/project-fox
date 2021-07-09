@@ -3,6 +3,7 @@ import { PixelDustBoard } from 'pixel-dust';
 import ToolBox from 'components/tool-box';
 import LayerBox from 'components/layer-box';
 import { Layer, InstrumentType } from 'pixel-dust/pixel-dust-api';
+import { useParams } from 'react-router';
 import {
   DrawingBoardContainer,
   CanvasWrapper,
@@ -11,6 +12,9 @@ import {
 } from './drawing-board.styles';
 
 function DrawingBoard(): JSX.Element {
+  const { id } = useParams();
+  console.log(id);
+
   const pixelDustBoardRef = useRef<PixelDustBoard>(null);
 
   const [activeInstrument, setActiveInstrument] = useState<InstrumentType>(InstrumentType.PEN);

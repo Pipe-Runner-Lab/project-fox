@@ -20,7 +20,7 @@ function Navbar(): JSX.Element {
             <DashboardIcon />
           </IconWrapper>
         </NavLink>
-        <NavLink to="/drawing-board" activeClassName="active">
+        <NavLink to="/new" activeClassName="active">
           <IconWrapper>
             <BrushIcon />
           </IconWrapper>
