@@ -17,6 +17,10 @@ class EventManager {
     initY: 0
   };
 
+  canvasScaleCache = {
+    scale: 1
+  };
+
   canvasMove$: Observable<{
     x: number;
     y: number;
@@ -27,12 +31,21 @@ class EventManager {
     y: number;
   }>;
 
+  canvasScale$: Observable<{
+    scale: number;
+  }>;
+
   constructor(options: EventManagerProps) {
     this.targetElement = options.canvasContainerElement;
 
     const mouseDown$ = fromEvent<MouseEvent>(this.targetElement, 'mousedown');
     const mouseMove$ = fromEvent<MouseEvent>(this.targetElement, 'mousemove');
     const mouseUp$ = fromEvent<MouseEvent>(document, 'mouseup');
+    const wheel$ = fromEvent<WheelEvent>(this.targetElement, 'wheel').pipe(
+      tap((event: WheelEvent) => {
+        event.preventDefault();
+      })
+    );
 
     const spaceKeyDown$ = fromEvent<KeyboardEvent>(document, 'keydown').pipe(
       filter((event: KeyboardEvent) => event.code.toLowerCase() === 'space')
@@ -79,6 +92,35 @@ class EventManager {
       }),
       takeUntil(spaceKeyUp$),
       repeat()
+    );
+
+    this.canvasScale$ = wheel$.pipe(
+      filter((event: WheelEvent) => event.ctrlKey),
+      map((event) => {
+        const prevScale = this.canvasScaleCache.scale;
+
+        if (event.deltaY > 0) {
+          if (prevScale >= 2) {
+            return this.canvasScaleCache;
+          }
+
+          this.canvasScaleCache = {
+            scale: prevScale + 0.1
+          };
+
+          return this.canvasScaleCache;
+        }
+
+        if (prevScale <= 0.7) {
+          return this.canvasScaleCache;
+        }
+
+        this.canvasScaleCache = {
+          scale: prevScale - 0.1
+        };
+
+        return this.canvasScaleCache;
+      })
     );
 
     this.canvasDraw$ = concat(mouseDown$.pipe(take(1)), mouseMove$).pipe(

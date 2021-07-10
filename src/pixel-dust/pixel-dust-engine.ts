@@ -77,6 +77,16 @@ class PixelDustEngine {
       error: (error) => console.error(error)
     });
 
+    this.eventManager.canvasScale$.subscribe({
+      next: (arg) => {
+        if (arg) {
+          this.pixelDustCanvasContainer?.style.setProperty('--stage-scale', String(arg.scale));
+        }
+      },
+      complete: () => {},
+      error: (error) => console.error(error)
+    });
+
     this.layerManager = new LayerManager({
       canvasType,
       canvasContainerElement: this.pixelDustCanvasContainer,
