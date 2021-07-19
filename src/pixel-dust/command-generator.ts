@@ -51,6 +51,7 @@ class CommandGenerator {
 
   constructor(options: CommandGeneratorProps) {
     this.rawDraw$ = options.drawStream;
+
     this.processedDraw$ = this.rawDraw$.pipe(
       map(({ x, y }) => ({ u: x / options.dimension, v: y / options.dimension })),
       map(({ u, v }) => ({
@@ -91,6 +92,11 @@ class CommandGenerator {
         return true;
       })
     );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  cleanUp(): void {
+    console.info('clean up for command generator called');
   }
 }
 

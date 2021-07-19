@@ -130,6 +130,11 @@ class EventManager {
       repeat()
     );
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  cleanUp(): void {
+    console.info('clean up for event manager called');
+  }
 }
 
 export default EventManager;

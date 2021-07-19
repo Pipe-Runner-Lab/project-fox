@@ -105,6 +105,15 @@ class PixelDustEngine {
     });
   }
 
+  cleanUp(): void {
+    // TODO Delete all DOM elements added by this lib
+
+    this.layerManager?.cleanUp();
+    this.commandGenerator?.cleanUp();
+    this.executionPipeline?.cleanUp();
+    this.eventManager?.cleanUp();
+  }
+
   resetCoordinates(): void {
     const rect = this.pixelDustCanvasContainer?.getBoundingClientRect();
 

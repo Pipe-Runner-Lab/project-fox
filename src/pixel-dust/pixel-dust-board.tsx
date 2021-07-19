@@ -48,6 +48,10 @@ class PixelDustBoard extends React.Component<PixelDustBoardProps, PixelDustBoard
     return false;
   }
 
+  componentWillUnmount(): void {
+    this.pixelDustApi?.cleanUp();
+  }
+
   render(): JSX.Element {
     return (
       <div
