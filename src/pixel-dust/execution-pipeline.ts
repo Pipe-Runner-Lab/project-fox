@@ -1,5 +1,4 @@
-import { CommandType, DrawCommand, EraseCommand } from './command';
-import CommandGenerator from './command-generator';
+import CommandGenerator, { InstrumentType, PenCommand, EraserCommand } from './command-generator';
 import LayerManager from './layer-manager';
 
 type ExecutionPipelineProps = {
@@ -16,32 +15,31 @@ class ExecutionPipeline {
     this.layerManager = options.layerManager;
     this.commandGenerator = options.commandGenerator;
 
-    this.commandGenerator.canvasCommandStream.subscribe({
+    this.commandGenerator.processedDraw$.subscribe({
       next: this.canvasCommandObserver.bind(this),
       error: (error) => console.error(error),
       complete: () => console.info('canvas command stream completed')
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  canvasCommandObserver(command: DrawCommand | EraseCommand): void {
+  canvasCommandObserver(arg: PenCommand | EraserCommand | null): void {
     const activeLayer = this.layerManager.getActiveLayer();
 
     if (!activeLayer) {
       return;
     }
 
-    switch (command.type) {
-      case CommandType.DRAW:
-        activeLayer.pixelCanvas.draw(command.u, command.v, (command as DrawCommand).color);
-        break;
-
-      case CommandType.ERASE:
-        activeLayer.pixelCanvas.erase(command.u, command.v);
-        break;
-
-      default:
-        break;
+    if (arg) {
+      switch (arg.instrument) {
+        case InstrumentType.PEN:
+          activeLayer.pixelCanvas.draw(arg.x, arg.y, arg.color);
+          break;
+        case InstrumentType.ERASER:
+          activeLayer.pixelCanvas.erase(arg.x, arg.y);
+          break;
+        default:
+          break;
+      }
     }
   }
 }

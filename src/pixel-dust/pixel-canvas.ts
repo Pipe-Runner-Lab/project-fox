@@ -39,20 +39,20 @@ class PixelCanvas {
     mountTarget.removeChild(this.canvas);
   }
 
-  draw(u: number, v: number, color: string): void {
+  draw(x: number, y: number, color: string): void {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
-      Math.round(Math.floor(u * this.canvasType) * this.tileDimension),
-      Math.round(Math.floor(v * this.canvasType) * this.tileDimension),
+      Math.round(x * this.tileDimension),
+      Math.round(y * this.tileDimension),
       this.tileDimension,
       this.tileDimension
     );
   }
 
-  erase(u: number, v: number): void {
+  erase(x: number, y: number): void {
     this.ctx.clearRect(
-      Math.round(Math.floor(u * this.canvasType) * this.tileDimension),
-      Math.round(Math.floor(v * this.canvasType) * this.tileDimension),
+      Math.round(x * this.tileDimension),
+      Math.round(y * this.tileDimension),
       this.tileDimension,
       this.tileDimension
     );
