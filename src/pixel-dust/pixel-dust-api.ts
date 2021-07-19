@@ -1,7 +1,7 @@
 import PixelDustEngine from './pixel-dust-engine';
 import { InstrumentType } from './command-generator';
 import { CanvasType } from './pixel-canvas';
-import { Layer } from './layer-manager';
+import { Layer, LayerCommandType } from './layer-manager';
 
 export type PixelDustApiProps = {
   mountTarget: HTMLDivElement;
@@ -52,7 +52,10 @@ class PixelDustApi {
   }
 
   addLayerAfter(arg?: { uuid?: string }): void {
-    this.pixelDustEngine.layerManager?.addLayerAfter(arg);
+    this.pixelDustEngine.layerManager?.layerCommand$.next({
+      type: LayerCommandType.ADD_AFTER,
+      ...arg
+    });
   }
 
   setActiveLayer(arg: { uuid: string }): void {
@@ -60,7 +63,10 @@ class PixelDustApi {
   }
 
   deleteLayer(arg: { uuid: string | undefined }): void {
-    this.pixelDustEngine.layerManager?.deleteLayer(arg);
+    this.pixelDustEngine.layerManager?.layerCommand$.next({
+      type: LayerCommandType.DELETE,
+      ...arg
+    });
   }
 }
 

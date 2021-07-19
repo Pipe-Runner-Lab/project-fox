@@ -51,6 +51,7 @@ class CommandGenerator {
 
   constructor(options: CommandGeneratorProps) {
     this.rawDraw$ = options.drawStream;
+
     this.processedDraw$ = this.rawDraw$.pipe(
       map(({ x, y }) => ({ u: x / options.dimension, v: y / options.dimension })),
       map(({ u, v }) => ({

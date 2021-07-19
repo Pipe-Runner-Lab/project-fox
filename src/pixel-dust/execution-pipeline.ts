@@ -1,5 +1,10 @@
 import CommandGenerator, { InstrumentType, PenCommand, EraserCommand } from './command-generator';
-import LayerManager from './layer-manager';
+import LayerManager, {
+  AddLayerAfter,
+  AddLayerBefore,
+  DeleteLayer,
+  LayerCommandType
+} from './layer-manager';
 
 type ExecutionPipelineProps = {
   layerManager: LayerManager;
@@ -19,6 +24,12 @@ class ExecutionPipeline {
       next: this.canvasCommandObserver.bind(this),
       error: (error) => console.error(error),
       complete: () => console.info('canvas command stream completed')
+    });
+
+    this.layerManager.layerCommand$.subscribe({
+      next: this.layerCommandObserver.bind(this),
+      error: (error) => console.error(error),
+      complete: () => console.info('layer command stream completed')
     });
   }
 
@@ -40,6 +51,22 @@ class ExecutionPipeline {
         default:
           break;
       }
+    }
+  }
+
+  layerCommandObserver(args: AddLayerAfter | AddLayerBefore | DeleteLayer): void {
+    switch (args.type) {
+      case LayerCommandType.ADD_AFTER:
+        this.layerManager.addLayerAfter({ uuid: args.uuid });
+        break;
+      case LayerCommandType.ADD_BEFORE:
+        this.layerManager.addLayerBefore({ uuid: args.uuid });
+        break;
+      case LayerCommandType.DELETE:
+        this.layerManager.deleteLayer({ uuid: args.uuid });
+        break;
+      default:
+        break;
     }
   }
 }
