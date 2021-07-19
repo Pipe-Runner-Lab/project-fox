@@ -93,6 +93,11 @@ class CommandGenerator {
       })
     );
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  cleanUp(): void {
+    console.info('clean up for command generator called');
+  }
 }
 
 export default CommandGenerator;

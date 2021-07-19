@@ -36,6 +36,10 @@ class PixelDustApi {
     }
   }
 
+  cleanUp(): void {
+    this.pixelDustEngine.cleanUp();
+  }
+
   setForegroundColor(color: string): void {
     if (this.pixelDustEngine.commandGenerator?.drawingState.foregroundColor)
       this.pixelDustEngine.commandGenerator.drawingState.foregroundColor = color;

@@ -61,6 +61,11 @@ class LayerManager {
     this.layerCommand$ = new Subject<AddLayerAfter | AddLayerBefore | DeleteLayer>();
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  cleanUp(): void {
+    console.info('clean up for layer manager called');
+  }
+
   setActiveLayer(arg: { uuid: string } | null): void {
     if (arg) {
       const filterOutput = this.layerStack.filter((layer) => layer.uuid === arg.uuid);

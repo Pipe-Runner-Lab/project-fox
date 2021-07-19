@@ -13,7 +13,7 @@ import {
 
 function DrawingBoard(): JSX.Element {
   const { id } = useParams();
-  console.log(id);
+  console.log('Project ID: ', id);
 
   const pixelDustBoardRef = useRef<PixelDustBoard>(null);
 

@@ -33,6 +33,11 @@ class ExecutionPipeline {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  cleanUp(): void {
+    console.info('clean up for execution pipeline called');
+  }
+
   canvasCommandObserver(arg: PenCommand | EraserCommand | null): void {
     const activeLayer = this.layerManager.getActiveLayer();
 
