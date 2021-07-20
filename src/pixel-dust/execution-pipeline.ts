@@ -1,3 +1,4 @@
+import { map, filter } from 'rxjs/operators';
 import CommandGenerator, { InstrumentType, PenCommand, EraserCommand } from './command-generator';
 import LayerManager, {
   AddLayerAfter,
@@ -5,6 +6,7 @@ import LayerManager, {
   DeleteLayer,
   LayerCommandType
 } from './layer-manager';
+import CommandHistory from './command-history';
 
 type ExecutionPipelineProps = {
   layerManager: LayerManager;
@@ -16,9 +18,27 @@ class ExecutionPipeline {
 
   commandGenerator: CommandGenerator;
 
+  commandHistory: CommandHistory;
+
   constructor(options: ExecutionPipelineProps) {
     this.layerManager = options.layerManager;
     this.commandGenerator = options.commandGenerator;
+    this.commandHistory = new CommandHistory({
+      drawCommand$: this.commandGenerator.processedDraw$.pipe(
+        filter(() => !!this.layerManager.activeLayer),
+        map((command) => {
+          if (!this.layerManager.activeLayer?.uuid) {
+            throw new Error('Active layer needed to store history');
+          }
+
+          return {
+            ...command,
+            activeLayerUuid: this.layerManager.activeLayer?.uuid
+          };
+        })
+      ),
+      layerCommand$: this.layerManager.layerCommand$
+    });
 
     this.commandGenerator.processedDraw$.subscribe({
       next: this.canvasCommandObserver.bind(this),

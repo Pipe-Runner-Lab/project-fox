@@ -41,7 +41,7 @@ class CommandGenerator {
     y: number;
   }>;
 
-  processedDraw$: Observable<PenCommand | EraserCommand | null>;
+  processedDraw$: Observable<PenCommand | EraserCommand>;
 
   drawingState = {
     foregroundColor: 'black',
@@ -74,7 +74,7 @@ class CommandGenerator {
               instrument: InstrumentType.ERASER
             } as EraserCommand;
           default:
-            return null;
+            throw new Error('Draw command not supported');
         }
       }),
       distinctUntilChanged((prev, curr) => {
