@@ -1,11 +1,15 @@
 import { map, filter } from 'rxjs/operators';
-import CommandGenerator, { InstrumentType, PenCommand, EraserCommand } from './command-generator';
-import LayerManager, {
+import CommandGenerator from './command-generator';
+import LayerManager from './layer-manager';
+import {
   AddLayerAfter,
   AddLayerBefore,
   DeleteLayer,
-  LayerCommandType
-} from './layer-manager';
+  LayerCommandType,
+  InstrumentType,
+  PenCommand,
+  EraserCommand
+} from './types';
 import CommandHistory from './command-history';
 
 type ExecutionPipelineProps = {

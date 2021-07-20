@@ -1,14 +1,11 @@
 import { Observable, merge } from 'rxjs';
-import { PenCommand, EraserCommand } from './command-generator';
-import { AddLayerAfter, AddLayerBefore, DeleteLayer } from './layer-manager';
-
-type ExtendedPenCommand = PenCommand & {
-  activeLayerUuid: string;
-};
-
-type ExtendedEraseCommand = EraserCommand & {
-  activeLayerUuid: string;
-};
+import {
+  AddLayerAfter,
+  AddLayerBefore,
+  DeleteLayer,
+  ExtendedPenCommand,
+  ExtendedEraseCommand
+} from './types';
 
 type CommandHistoryProps = {
   drawCommand$: Observable<ExtendedPenCommand | ExtendedEraseCommand>;

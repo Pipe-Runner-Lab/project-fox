@@ -1,15 +1,13 @@
 import PixelDustEngine from './pixel-dust-engine';
-import { InstrumentType } from './command-generator';
-import { CanvasType } from './pixel-canvas';
-import { Layer, LayerCommandType } from './layer-manager';
+import { LayerMetaData, LayerCommandType, CanvasType, InstrumentType } from './types';
 
-export type PixelDustApiProps = {
+type PixelDustApiProps = {
   mountTarget: HTMLDivElement;
   dimension?: number;
   canvasType?: CanvasType;
   initializeWithLayer?: boolean;
-  layerStackUpdateCB?: (layerStack: Layer[]) => void;
-  activeLayerUpdateCB?: (layerStack: Layer | null) => void;
+  layerStackUpdateCB?: (layerStack: LayerMetaData[]) => void;
+  activeLayerUpdateCB?: (layerStack: LayerMetaData | null) => void;
 };
 
 class PixelDustApi {
@@ -75,5 +73,5 @@ class PixelDustApi {
 }
 
 export { CanvasType, InstrumentType };
-export type { Layer };
+export type { LayerMetaData };
 export default PixelDustApi;

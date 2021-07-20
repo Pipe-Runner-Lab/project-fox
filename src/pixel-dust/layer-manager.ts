@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import PixelCanvas, { CanvasType } from './pixel-canvas';
+import PixelCanvas from './pixel-canvas';
+import { LayerMetaData, AddLayerAfter, AddLayerBefore, DeleteLayer, CanvasType } from './types';
 
 export type Layer = {
   pixelCanvas: PixelCanvas;
@@ -11,28 +12,6 @@ type LayerManagerProps = {
   canvasContainerElement: HTMLDivElement;
   dimension: number;
   canvasType: CanvasType;
-};
-
-export enum LayerCommandType {
-  ADD_AFTER = 'ADD_AFTER',
-  ADD_BEFORE = 'ADD_BEFORE',
-  DELETE = 'DELETE',
-  REARRANGE = 'REARRANGE'
-}
-
-export type AddLayerAfter = {
-  type: LayerCommandType.ADD_AFTER;
-  uuid?: string;
-};
-
-export type AddLayerBefore = {
-  type: LayerCommandType.ADD_BEFORE;
-  uuid: string;
-};
-
-export type DeleteLayer = {
-  type: LayerCommandType.DELETE;
-  uuid: string | undefined;
 };
 
 class LayerManager {
@@ -46,9 +25,9 @@ class LayerManager {
 
   activeLayer: Layer | null = null;
 
-  layerStackUpdateCB: undefined | ((arg: Layer[]) => void) = undefined;
+  layerStackUpdateCB: undefined | ((arg: LayerMetaData[]) => void) = undefined;
 
-  activeLayerUpdateCB: undefined | ((arg: Layer | null) => void) = undefined;
+  activeLayerUpdateCB: undefined | ((arg: LayerMetaData | null) => void) = undefined;
 
   layerCommand$: Subject<AddLayerAfter | AddLayerBefore | DeleteLayer>;
 
@@ -106,7 +85,12 @@ class LayerManager {
         uuid
       };
       this.layerStack.push(layer);
-      if (this.layerStackUpdateCB) this.layerStackUpdateCB(this.layerStack);
+      if (this.layerStackUpdateCB)
+        this.layerStackUpdateCB(
+          this.layerStack.map((_layer) => ({
+            uuid: _layer.uuid
+          }))
+        );
       return layer;
     }
     // TODO

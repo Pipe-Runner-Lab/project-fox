@@ -2,7 +2,7 @@ import CommandGenerator from './command-generator';
 import EventManager from './event-manager';
 import ExecutionPipeline from './execution-pipeline';
 import LayerManager from './layer-manager';
-import { CanvasType } from './pixel-canvas';
+import { CanvasType } from './types';
 import './pixel-dust.css';
 
 type PixelDustEngineProps = {

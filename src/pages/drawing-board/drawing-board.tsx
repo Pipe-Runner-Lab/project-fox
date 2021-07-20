@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { PixelDustBoard } from 'pixel-dust';
 import ToolBox from 'components/tool-box';
 import LayerBox from 'components/layer-box';
-import { Layer, InstrumentType } from 'pixel-dust/pixel-dust-api';
+import { InstrumentType, LayerMetaData } from 'pixel-dust/pixel-dust-api';
 import { useParams } from 'react-router';
 import {
   DrawingBoardContainer,
@@ -21,13 +21,13 @@ function DrawingBoard(): JSX.Element {
   const [activeForegroundRGBA, setActiveForegroundRGBA] = useState<string>('#000000');
   const [activeBackgroundRGBA, setActiveBackgroundRGBA] = useState<string>('#ffffff');
 
-  const [layerStack, setLayerStack] = useState<Layer[]>([]);
-  const [activeLayer, setActiveLayer] = useState<Layer | null>(null);
+  const [layerStack, setLayerStack] = useState<LayerMetaData[]>([]);
+  const [activeLayer, setActiveLayer] = useState<LayerMetaData | null>(null);
 
-  const onLayerStackChange = useCallback((_layerStack: Layer[]): void => {
+  const onLayerStackChange = useCallback((_layerStack: LayerMetaData[]): void => {
     setLayerStack([..._layerStack]);
   }, []);
-  const onActiveLayerChange = useCallback((_activeLayer: Layer | null): void => {
+  const onActiveLayerChange = useCallback((_activeLayer: LayerMetaData | null): void => {
     setActiveLayer(_activeLayer);
   }, []);
 

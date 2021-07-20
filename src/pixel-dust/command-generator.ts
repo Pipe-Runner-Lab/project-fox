@@ -1,31 +1,6 @@
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { CanvasType } from './pixel-canvas';
-
-export enum InstrumentType {
-  PEN = 'PEN',
-  RANDOM_WIDTH_PEN = 'RANDOM_WIDTH_PEN',
-  BUCKET = 'BUCKET',
-  ERASER = 'ERASER',
-  PIXEL_SQUARE = 'PIXEL_SQUARE',
-  PIXEL_CIRCLE = 'PIXEL_CIRCLE',
-  PIXEL_FRAME = 'PIXEL_FRAME',
-  COLOR_PICKER = 'COLOR_PICKER'
-}
-
-type BaseCommand = {
-  x: number;
-  y: number;
-};
-
-export type PenCommand = BaseCommand & {
-  instrument: InstrumentType.PEN;
-  color: string;
-};
-
-export type EraserCommand = BaseCommand & {
-  instrument: InstrumentType.ERASER;
-};
+import { CanvasType, PenCommand, EraserCommand, InstrumentType } from './types';
 
 type CommandGeneratorProps = {
   drawStream: Observable<{

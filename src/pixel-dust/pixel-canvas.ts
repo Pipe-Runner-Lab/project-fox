@@ -1,8 +1,4 @@
-export enum CanvasType {
-  X50 = 50,
-  X64 = 64,
-  X100 = 100
-}
+import { CanvasType } from './types';
 
 class PixelCanvas {
   canvas: HTMLCanvasElement;

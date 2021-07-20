@@ -1,12 +1,12 @@
 import React from 'react';
-import PixelDustApi, { Layer, InstrumentType } from './pixel-dust-api';
+import PixelDustApi, { LayerMetaData, InstrumentType } from './pixel-dust-api';
 
 type PixelDustBoardProps = {
   foregroundColor: string;
   backgroundColor: string;
   instrument: InstrumentType;
-  onLayerStackChange: (layerStack: Layer[]) => void;
-  onActiveLayerChange: (layer: Layer | null) => void;
+  onLayerStackChange: (layerStack: LayerMetaData[]) => void;
+  onActiveLayerChange: (layer: LayerMetaData | null) => void;
 };
 
 type PixelDustBoardState = Record<string, undefined>;

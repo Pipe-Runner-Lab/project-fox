@@ -1,6 +1,6 @@
 import React from 'react';
+import { LayerMetaData } from 'pixel-dust/pixel-dust-api';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { Layer } from 'pixel-dust/pixel-dust-api';
 import { VscAdd as AddLayerIcon, VscRemove as DeleteLayerIcon } from 'react-icons/vsc';
 
 import {
@@ -15,8 +15,8 @@ import {
 } from './layer-box.styles';
 
 type LayerBoxProps = {
-  layerStack: Layer[];
-  activeLayer: Layer | null;
+  layerStack: LayerMetaData[];
+  activeLayer: LayerMetaData | null;
   addLayerAfter: (arg?: { uuid?: string }) => void;
   setActiveLayer: (arg: { uuid: string }) => void;
   deleteLayer: (arg: { uuid: string | undefined }) => void;
@@ -43,7 +43,7 @@ function LayerBox({
       <LayerStackContainer>
         <Scrollbars autoHide autoHideTimeout={500} style={{ height: '100%' }}>
           <LayerStackWrapper>
-            {[...layerStack].reverse().map((layer: Layer) => (
+            {[...layerStack].reverse().map((layer: LayerMetaData) => (
               <LayerCard
                 key={layer.uuid}
                 id={layer.uuid}
