@@ -28,7 +28,7 @@ class ExecutionPipeline {
     this.layerManager = options.layerManager;
     this.commandGenerator = options.commandGenerator;
     this.commandHistory = new CommandHistory({
-      drawCommand$: this.commandGenerator.processedDraw$.pipe(
+      drawCommand$: this.commandGenerator.canvasCommand$.pipe(
         filter(() => !!this.layerManager.activeLayer),
         map((command) => {
           if (!this.layerManager.activeLayer?.uuid) {
@@ -41,16 +41,16 @@ class ExecutionPipeline {
           };
         })
       ),
-      layerCommand$: this.layerManager.layerCommand$
+      layerCommand$: this.commandGenerator.layerCommand$
     });
 
-    this.commandGenerator.processedDraw$.subscribe({
+    this.commandGenerator.canvasCommand$.subscribe({
       next: this.canvasCommandObserver.bind(this),
       error: (error) => console.error(error),
       complete: () => console.info('canvas command stream completed')
     });
 
-    this.layerManager.layerCommand$.subscribe({
+    this.commandGenerator.layerCommand$.subscribe({
       next: this.layerCommandObserver.bind(this),
       error: (error) => console.error(error),
       complete: () => console.info('layer command stream completed')

@@ -15,17 +15,15 @@ type PixelDustEngineProps = {
 class PixelDustEngine {
   mountTarget: HTMLDivElement;
 
-  pixelDustCanvasContainer: HTMLDivElement | undefined;
+  pixelDustCanvasContainer: HTMLDivElement;
 
-  dimension: number;
+  eventManager: EventManager;
 
-  eventManager: EventManager | undefined;
+  layerManager: LayerManager;
 
-  layerManager: LayerManager | undefined;
+  commandGenerator: CommandGenerator;
 
-  commandGenerator: CommandGenerator | undefined;
-
-  executionPipeline: ExecutionPipeline | undefined;
+  executionPipeline: ExecutionPipeline;
 
   containerPosition = {
     x: 0,
@@ -42,66 +40,67 @@ class PixelDustEngine {
   };
 
   constructor({ mountTarget, dimension, canvasType }: PixelDustEngineProps) {
-    this.dimension = dimension;
     this.mountTarget = mountTarget;
-    this.initializeDrawingStage(canvasType, dimension);
-  }
 
-  initializeDrawingStage(canvasType: CanvasType, dimension: number): void {
+    // Create stage (area with gray background)
     const stage = document.createElement('div');
     stage.classList.add('pixel-dust-stage');
 
+    // Create canvas container (the white area also responsible for dealing with interaction events)
     this.pixelDustCanvasContainer = document.createElement('div');
     this.pixelDustCanvasContainer.classList.add('pixel-dust-canvas-container');
     this.pixelDustCanvasContainer.style.setProperty('height', `${dimension}px`);
     this.pixelDustCanvasContainer.style.setProperty('width', `${dimension}px`);
 
+    // Add canvas container to stage
     stage.appendChild(this.pixelDustCanvasContainer);
+
+    // Add stage to mount point
     this.mountTarget.appendChild(stage);
 
-    this.resetCoordinates();
-
+    // Initialize event manager for getting interaction streams
     this.eventManager = new EventManager({
       canvasContainerElement: this.pixelDustCanvasContainer
     });
 
-    this.eventManager.canvasMove$.subscribe({
-      next: (arg) => {
-        if (arg) {
-          const { x, y } = arg;
-          this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-x', String(x));
-          this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-y', String(y));
-        }
-      },
-      complete: () => {},
-      error: (error) => console.error(error)
-    });
-
-    this.eventManager.canvasScale$.subscribe({
-      next: (arg) => {
-        if (arg) {
-          this.pixelDustCanvasContainer?.style.setProperty('--stage-scale', String(arg.scale));
-        }
-      },
-      complete: () => {},
-      error: (error) => console.error(error)
-    });
-
+    // Initialize layer manager for handling canvas layers and active layer
     this.layerManager = new LayerManager({
       canvasType,
-      canvasContainerElement: this.pixelDustCanvasContainer,
-      dimension
+      dimension,
+      canvasContainerElement: this.pixelDustCanvasContainer
     });
 
+    // Initialize command generator
     this.commandGenerator = new CommandGenerator({
-      dimension: this.dimension,
+      dimension,
       canvasType,
       drawStream: this.eventManager.canvasDraw$
     });
 
+    // Initialize execution pipeline
     this.executionPipeline = new ExecutionPipeline({
       layerManager: this.layerManager,
       commandGenerator: this.commandGenerator
+    });
+
+    // use event manager move stream to deal with canvas move
+    this.eventManager.canvasMove$.subscribe({
+      next: (arg) => {
+        const { x, y } = arg;
+        this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-x', String(x));
+        this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-y', String(y));
+      },
+      complete: () => {},
+      error: (error) => console.error(error)
+    });
+
+    // use event manager scroll stream to deal with canvas scale
+    this.eventManager.canvasScale$.subscribe({
+      next: (arg) => {
+        this.pixelDustCanvasContainer?.style.setProperty('--stage-scale', String(arg.scale));
+      },
+      complete: () => {},
+      error: (error) => console.error(error)
     });
   }
 
@@ -112,18 +111,6 @@ class PixelDustEngine {
     this.commandGenerator?.cleanUp();
     this.executionPipeline?.cleanUp();
     this.eventManager?.cleanUp();
-  }
-
-  resetCoordinates(): void {
-    const rect = this.pixelDustCanvasContainer?.getBoundingClientRect();
-
-    this.containerPosition = {
-      ...this.containerPosition,
-      top: rect?.top ?? 0,
-      left: rect?.left ?? 0,
-      height: rect?.height ?? this.dimension,
-      width: rect?.width ?? this.dimension
-    };
   }
 }
 

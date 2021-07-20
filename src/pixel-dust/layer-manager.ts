@@ -1,7 +1,6 @@
-import { Subject } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import PixelCanvas from './pixel-canvas';
-import { LayerMetaData, AddLayerAfter, AddLayerBefore, DeleteLayer, CanvasType } from './types';
+import { LayerMetaData, CanvasType } from './types';
 
 export type Layer = {
   pixelCanvas: PixelCanvas;
@@ -29,15 +28,11 @@ class LayerManager {
 
   activeLayerUpdateCB: undefined | ((arg: LayerMetaData | null) => void) = undefined;
 
-  layerCommand$: Subject<AddLayerAfter | AddLayerBefore | DeleteLayer>;
-
   constructor(options: LayerManagerProps) {
     this.layerStack = [];
     this.dimension = options.dimension;
     this.canvasType = options.canvasType;
     this.canvasContainerElement = options.canvasContainerElement;
-
-    this.layerCommand$ = new Subject<AddLayerAfter | AddLayerBefore | DeleteLayer>();
   }
 
   // eslint-disable-next-line class-methods-use-this

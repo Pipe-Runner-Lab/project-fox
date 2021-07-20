@@ -1,6 +1,14 @@
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { CanvasType, PenCommand, EraserCommand, InstrumentType } from './types';
+import {
+  CanvasType,
+  PenCommand,
+  EraserCommand,
+  InstrumentType,
+  AddLayerAfter,
+  AddLayerBefore,
+  DeleteLayer
+} from './types';
 
 type CommandGeneratorProps = {
   drawStream: Observable<{
@@ -11,12 +19,9 @@ type CommandGeneratorProps = {
   canvasType: CanvasType;
 };
 class CommandGenerator {
-  rawDraw$: Observable<{
-    x: number;
-    y: number;
-  }>;
+  canvasCommand$: Observable<PenCommand | EraserCommand>;
 
-  processedDraw$: Observable<PenCommand | EraserCommand>;
+  layerCommand$ = new Subject<AddLayerAfter | AddLayerBefore | DeleteLayer>();
 
   drawingState = {
     foregroundColor: 'black',
@@ -25,9 +30,7 @@ class CommandGenerator {
   };
 
   constructor(options: CommandGeneratorProps) {
-    this.rawDraw$ = options.drawStream;
-
-    this.processedDraw$ = this.rawDraw$.pipe(
+    this.canvasCommand$ = options.drawStream.pipe(
       map(({ x, y }) => ({ u: x / options.dimension, v: y / options.dimension })),
       map(({ u, v }) => ({
         x: Math.floor(u * options.canvasType),

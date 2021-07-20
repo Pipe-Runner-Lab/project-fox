@@ -29,8 +29,8 @@ class PixelDustApi {
       throw Error('Could not set layer manager callbacks');
     }
     if (initializeWithLayer) {
-      const addedLayer = this.pixelDustEngine.layerManager?.addLayerAfter();
-      if (addedLayer) this.pixelDustEngine.layerManager?.setActiveLayer({ uuid: addedLayer.uuid });
+      const addedLayer = this.pixelDustEngine.layerManager.addLayerAfter();
+      if (addedLayer) this.pixelDustEngine.layerManager.setActiveLayer({ uuid: addedLayer.uuid });
     }
   }
 
@@ -39,33 +39,33 @@ class PixelDustApi {
   }
 
   setForegroundColor(color: string): void {
-    if (this.pixelDustEngine.commandGenerator?.drawingState.foregroundColor)
+    if (this.pixelDustEngine.commandGenerator.drawingState.foregroundColor)
       this.pixelDustEngine.commandGenerator.drawingState.foregroundColor = color;
   }
 
   setBackgroundColor(color: string): void {
-    if (this.pixelDustEngine.commandGenerator?.drawingState.backgroundColor)
+    if (this.pixelDustEngine.commandGenerator.drawingState.backgroundColor)
       this.pixelDustEngine.commandGenerator.drawingState.backgroundColor = color;
   }
 
   setInstrumentType(instrument: InstrumentType): void {
-    if (this.pixelDustEngine.commandGenerator?.drawingState.instrument)
+    if (this.pixelDustEngine.commandGenerator.drawingState.instrument)
       this.pixelDustEngine.commandGenerator.drawingState.instrument = instrument;
   }
 
   addLayerAfter(arg?: { uuid?: string }): void {
-    this.pixelDustEngine.layerManager?.layerCommand$.next({
+    this.pixelDustEngine.commandGenerator.layerCommand$.next({
       type: LayerCommandType.ADD_AFTER,
       ...arg
     });
   }
 
   setActiveLayer(arg: { uuid: string }): void {
-    this.pixelDustEngine.layerManager?.setActiveLayer(arg);
+    this.pixelDustEngine.layerManager.setActiveLayer(arg);
   }
 
   deleteLayer(arg: { uuid: string | undefined }): void {
-    this.pixelDustEngine.layerManager?.layerCommand$.next({
+    this.pixelDustEngine.commandGenerator.layerCommand$.next({
       type: LayerCommandType.DELETE,
       ...arg
     });
