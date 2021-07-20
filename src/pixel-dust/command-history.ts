@@ -1,7 +1,7 @@
 import { Observable, merge } from 'rxjs';
 import {
-  AddLayerAfter,
-  AddLayerBefore,
+  ExtendedAddLayerAfter,
+  ExtendedAddLayerBefore,
   DeleteLayer,
   ExtendedPenCommand,
   ExtendedEraseCommand
@@ -9,14 +9,14 @@ import {
 
 type CommandHistoryProps = {
   drawCommand$: Observable<ExtendedPenCommand | ExtendedEraseCommand>;
-  layerCommand$: Observable<AddLayerAfter | AddLayerBefore | DeleteLayer>;
+  layerCommand$: Observable<ExtendedAddLayerAfter | ExtendedAddLayerBefore | DeleteLayer>;
 };
 
 type Command =
   | ExtendedPenCommand
   | ExtendedEraseCommand
-  | AddLayerAfter
-  | AddLayerBefore
+  | ExtendedAddLayerAfter
+  | ExtendedAddLayerBefore
   | DeleteLayer;
 
 class CommandHistory {
@@ -24,8 +24,14 @@ class CommandHistory {
 
   constructor({ drawCommand$, layerCommand$ }: CommandHistoryProps) {
     merge(drawCommand$, layerCommand$).subscribe((command) => {
+      console.log(command);
       this.redoStack.push(command);
     });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  cleanUp(): void {
+    console.info('clean up for command history called');
   }
 }
 

@@ -34,6 +34,14 @@ export type DeleteLayer = {
   uuid: string | undefined;
 };
 
+export type ExtendedAddLayerAfter = AddLayerAfter & {
+  generatedUuid: string;
+};
+
+export type ExtendedAddLayerBefore = AddLayerBefore & {
+  generatedUuid: string;
+};
+
 /** Command Generator types */
 
 export enum InstrumentType {

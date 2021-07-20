@@ -103,10 +103,10 @@ class LayerManager {
     return layer;
   }
 
-  addLayerBefore(arg: { uuid: string }): void {
+  addLayerBefore(arg: { uuid: string }): Layer {
     if (!arg.uuid) {
       const uuid = uuidv4();
-      this.layerStack.push({
+      const layer = {
         pixelCanvas: new PixelCanvas(
           this.canvasType,
           this.dimension,
@@ -114,9 +114,12 @@ class LayerManager {
           uuid
         ),
         uuid
-      });
+      };
+      this.layerStack.push(layer);
+      return layer;
     }
-    // TODO
+
+    throw new Error('UUID needed for adding layer before a layer');
   }
 
   deleteLayer(arg: { uuid: string | undefined }): void {
@@ -131,6 +134,7 @@ class LayerManager {
       selectedLayer.pixelCanvas.deRegister(this.canvasContainerElement);
       this.layerStack = this.layerStack.filter((layer) => layer.uuid !== selectedLayer.uuid);
       if (this.layerStackUpdateCB) this.layerStackUpdateCB(this.layerStack);
+
       this.setActiveLayer(null);
     }
   }

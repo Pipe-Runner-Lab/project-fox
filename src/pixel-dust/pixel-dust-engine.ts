@@ -15,6 +15,8 @@ type PixelDustEngineProps = {
 class PixelDustEngine {
   mountTarget: HTMLDivElement;
 
+  stage: HTMLDivElement;
+
   pixelDustCanvasContainer: HTMLDivElement;
 
   eventManager: EventManager;
@@ -43,8 +45,8 @@ class PixelDustEngine {
     this.mountTarget = mountTarget;
 
     // Create stage (area with gray background)
-    const stage = document.createElement('div');
-    stage.classList.add('pixel-dust-stage');
+    this.stage = document.createElement('div');
+    this.stage.classList.add('pixel-dust-stage');
 
     // Create canvas container (the white area also responsible for dealing with interaction events)
     this.pixelDustCanvasContainer = document.createElement('div');
@@ -53,14 +55,15 @@ class PixelDustEngine {
     this.pixelDustCanvasContainer.style.setProperty('width', `${dimension}px`);
 
     // Add canvas container to stage
-    stage.appendChild(this.pixelDustCanvasContainer);
+    this.stage.appendChild(this.pixelDustCanvasContainer);
 
     // Add stage to mount point
-    this.mountTarget.appendChild(stage);
+    this.mountTarget.appendChild(this.stage);
 
     // Initialize event manager for getting interaction streams
     this.eventManager = new EventManager({
-      canvasContainerElement: this.pixelDustCanvasContainer
+      canvasContainerElement: this.pixelDustCanvasContainer,
+      stage: this.stage
     });
 
     // Initialize layer manager for handling canvas layers and active layer

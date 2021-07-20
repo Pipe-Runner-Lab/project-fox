@@ -1,15 +1,7 @@
-import { map, filter } from 'rxjs/operators';
+import { map, filter, tap } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
-import {
-  AddLayerAfter,
-  AddLayerBefore,
-  DeleteLayer,
-  LayerCommandType,
-  InstrumentType,
-  PenCommand,
-  EraserCommand
-} from './types';
+import { LayerCommandType, InstrumentType } from './types';
 import CommandHistory from './command-history';
 
 type ExecutionPipelineProps = {
@@ -39,64 +31,51 @@ class ExecutionPipeline {
             ...command,
             activeLayerUuid: this.layerManager.activeLayer?.uuid
           };
+        }),
+        tap((command) => {
+          switch (command.instrument) {
+            case InstrumentType.PEN:
+              this.layerManager.activeLayer?.pixelCanvas.draw(command.x, command.y, command.color);
+              break;
+            case InstrumentType.ERASER:
+              this.layerManager.activeLayer?.pixelCanvas.erase(command.x, command.y);
+              break;
+            default:
+              break;
+          }
         })
       ),
-      layerCommand$: this.commandGenerator.layerCommand$
-    });
-
-    this.commandGenerator.canvasCommand$.subscribe({
-      next: this.canvasCommandObserver.bind(this),
-      error: (error) => console.error(error),
-      complete: () => console.info('canvas command stream completed')
-    });
-
-    this.commandGenerator.layerCommand$.subscribe({
-      next: this.layerCommandObserver.bind(this),
-      error: (error) => console.error(error),
-      complete: () => console.info('layer command stream completed')
+      layerCommand$: this.commandGenerator.layerCommand$.pipe(
+        map((command) => {
+          switch (command.type) {
+            case LayerCommandType.ADD_AFTER: {
+              const { uuid: generatedUuid } = this.layerManager.addLayerAfter({
+                uuid: command.uuid
+              });
+              return { ...command, generatedUuid };
+            }
+            case LayerCommandType.ADD_BEFORE: {
+              const { uuid: generatedUuid } = this.layerManager.addLayerBefore({
+                uuid: command.uuid
+              });
+              return { ...command, generatedUuid };
+            }
+            case LayerCommandType.DELETE: {
+              this.layerManager.deleteLayer({ uuid: command.uuid });
+              return command;
+            }
+            default:
+              throw new Error('Layer command not supported');
+          }
+        })
+      )
     });
   }
 
   // eslint-disable-next-line class-methods-use-this
   cleanUp(): void {
+    this.commandHistory.cleanUp();
     console.info('clean up for execution pipeline called');
-  }
-
-  canvasCommandObserver(arg: PenCommand | EraserCommand | null): void {
-    const activeLayer = this.layerManager.getActiveLayer();
-
-    if (!activeLayer) {
-      return;
-    }
-
-    if (arg) {
-      switch (arg.instrument) {
-        case InstrumentType.PEN:
-          activeLayer.pixelCanvas.draw(arg.x, arg.y, arg.color);
-          break;
-        case InstrumentType.ERASER:
-          activeLayer.pixelCanvas.erase(arg.x, arg.y);
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  layerCommandObserver(args: AddLayerAfter | AddLayerBefore | DeleteLayer): void {
-    switch (args.type) {
-      case LayerCommandType.ADD_AFTER:
-        this.layerManager.addLayerAfter({ uuid: args.uuid });
-        break;
-      case LayerCommandType.ADD_BEFORE:
-        this.layerManager.addLayerBefore({ uuid: args.uuid });
-        break;
-      case LayerCommandType.DELETE:
-        this.layerManager.deleteLayer({ uuid: args.uuid });
-        break;
-      default:
-        break;
-    }
   }
 }
 
