@@ -23,9 +23,11 @@ class CommandHistory {
   redoStack: Command[] = [];
 
   constructor({ drawCommand$, layerCommand$ }: CommandHistoryProps) {
-    merge(drawCommand$, layerCommand$).subscribe((command) => {
-      console.log(command);
-      this.redoStack.push(command);
+    merge(drawCommand$, layerCommand$).subscribe({
+      next: (command) => {
+        console.log(command);
+        this.redoStack.push(command);
+      }
     });
   }
 

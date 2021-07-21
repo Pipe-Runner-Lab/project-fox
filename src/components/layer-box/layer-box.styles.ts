@@ -76,10 +76,11 @@ export const LayerStackWrapper = styled.div`
   }
 `;
 
-export const LayerCard = styled.div<{ active: boolean }>`
+export const LayerCard = styled.div<{ active: boolean; imageUrl?: string }>`
   height: 122px;
   border: 1px ${(props) => (props.active ? '#8b5cf6' : '#d1d5db')} solid;
   border-radius: 5px;
-  background-color: #f3f4f6;
+  background: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : '#f3f4f6')};
+  background-size: contain;
   cursor: pointer;
 `;

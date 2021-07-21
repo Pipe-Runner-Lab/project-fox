@@ -49,6 +49,7 @@ function LayerBox({
                 id={layer.uuid}
                 active={layer.uuid === activeLayer?.uuid}
                 onClick={() => setActiveLayer({ uuid: layer.uuid })}
+                imageUrl={layer.imagePreview}
               />
             ))}
           </LayerStackWrapper>

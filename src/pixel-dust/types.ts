@@ -10,6 +10,7 @@ export enum CanvasType {
 
 export type LayerMetaData = {
   uuid: string;
+  imagePreview?: string;
 };
 
 export enum LayerCommandType {

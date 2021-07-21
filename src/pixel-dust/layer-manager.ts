@@ -5,6 +5,7 @@ import { LayerMetaData, CanvasType } from './types';
 export type Layer = {
   pixelCanvas: PixelCanvas;
   uuid: string;
+  imagePreview?: string;
 };
 
 type LayerManagerProps = {
@@ -80,12 +81,15 @@ class LayerManager {
         uuid
       };
       this.layerStack.push(layer);
+
       if (this.layerStackUpdateCB)
         this.layerStackUpdateCB(
           this.layerStack.map((_layer) => ({
-            uuid: _layer.uuid
+            uuid: _layer.uuid,
+            imagePreview: _layer.imagePreview
           }))
         );
+
       return layer;
     }
     // TODO
@@ -133,10 +137,26 @@ class LayerManager {
       }
       selectedLayer.pixelCanvas.deRegister(this.canvasContainerElement);
       this.layerStack = this.layerStack.filter((layer) => layer.uuid !== selectedLayer.uuid);
-      if (this.layerStackUpdateCB) this.layerStackUpdateCB(this.layerStack);
+
+      if (this.layerStackUpdateCB)
+        this.layerStackUpdateCB(
+          this.layerStack.map((_layer) => ({
+            uuid: _layer.uuid,
+            imagePreview: _layer.imagePreview
+          }))
+        );
 
       this.setActiveLayer(null);
     }
+  }
+
+  updateLayerPreview(): void {
+    for (let idx = 0, { length } = this.layerStack; idx < length; idx += 1) {
+      const layer = this.layerStack[idx];
+      layer.imagePreview = layer.pixelCanvas.canvas.toDataURL('img/png');
+    }
+
+    if (this.layerStackUpdateCB) this.layerStackUpdateCB(this.layerStack);
   }
 }
 
