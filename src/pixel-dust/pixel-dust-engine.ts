@@ -3,6 +3,7 @@ import EventManager from './event-manager';
 import ExecutionPipeline from './execution-pipeline';
 import LayerManager from './layer-manager';
 import { CanvasType } from './types';
+import CanvasGuide from './canvas-guide';
 import './pixel-dust.css';
 
 type PixelDustEngineProps = {
@@ -13,6 +14,8 @@ type PixelDustEngineProps = {
 };
 
 class PixelDustEngine {
+  canvasGuide: CanvasGuide | undefined;
+
   mountTarget: HTMLDivElement;
 
   stage: HTMLDivElement;
@@ -56,6 +59,7 @@ class PixelDustEngine {
 
     // Add canvas container to stage
     this.stage.appendChild(this.pixelDustCanvasContainer);
+    this.canvasGuide = new CanvasGuide(canvasType, dimension, this.pixelDustCanvasContainer);
 
     // Add stage to mount point
     this.mountTarget.appendChild(this.stage);
