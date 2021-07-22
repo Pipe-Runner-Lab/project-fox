@@ -68,12 +68,8 @@ export const LayerStackWrapper = styled.div`
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 8px 8px 0px 8px;
   justify-content: flex-end;
-
-  & > div + div {
-    margin-top: 8px;
-  }
 `;
 
 export const LayerCard = styled.div<{ active: boolean; imageUrl?: string }>`
@@ -83,4 +79,33 @@ export const LayerCard = styled.div<{ active: boolean; imageUrl?: string }>`
   background: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : '#f3f4f6')};
   background-size: contain;
   cursor: pointer;
+`;
+
+export const LayerGap = styled.div`
+  width: 100%;
+
+  &::before {
+    content: '+';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    color: #6b7280;
+    background: #f3f4f6;
+    opacity: 0;
+    transition: all cubic-bezier(0.645, 0.045, 0.355, 1) 100ms;
+    cursor: pointer;
+    border: 1px #d1d5db dashed;
+  }
+
+  &:hover {
+    &::before {
+      opacity: 1;
+      height: 32px;
+      margin: 8px 0px;
+    }
+  }
 `;

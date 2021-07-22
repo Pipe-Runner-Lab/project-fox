@@ -25,7 +25,7 @@ function DrawingBoard(): JSX.Element {
   const [activeLayer, setActiveLayer] = useState<LayerMetaData | null>(null);
 
   const onLayerStackChange = useCallback((_layerStack: LayerMetaData[]): void => {
-    setLayerStack([..._layerStack]);
+    setLayerStack([..._layerStack].reverse());
   }, []);
   const onActiveLayerChange = useCallback((_activeLayer: LayerMetaData | null): void => {
     setActiveLayer(_activeLayer);
@@ -38,6 +38,13 @@ function DrawingBoard(): JSX.Element {
     [pixelDustBoardRef]
   );
 
+  const addLayerBeforeOnEngine = useCallback(
+    (arg: { uuid: string }): void => {
+      pixelDustBoardRef.current?.pixelDustApi?.addLayerBefore(arg);
+    },
+    [pixelDustBoardRef]
+  );
+
   const setActiveLayerOnEngine = useCallback(
     (arg: { uuid: string }): void => {
       pixelDustBoardRef.current?.pixelDustApi?.setActiveLayer(arg);
@@ -46,7 +53,7 @@ function DrawingBoard(): JSX.Element {
   );
 
   const deleteLayerOnEngine = useCallback(
-    (arg: { uuid: string | undefined }): void => {
+    (arg: { uuid: string }): void => {
       pixelDustBoardRef.current?.pixelDustApi?.deleteLayer(arg);
     },
     [pixelDustBoardRef]
@@ -74,6 +81,7 @@ function DrawingBoard(): JSX.Element {
       </CanvasWrapper>
       <LayerBoxWrapper>
         <LayerBox
+          addLayerBefore={addLayerBeforeOnEngine}
           addLayerAfter={addLayerAfterOnEngine}
           setActiveLayer={setActiveLayerOnEngine}
           deleteLayer={deleteLayerOnEngine}

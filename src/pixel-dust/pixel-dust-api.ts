@@ -60,11 +60,18 @@ class PixelDustApi {
     });
   }
 
+  addLayerBefore(arg: { uuid: string }): void {
+    this.pixelDustEngine.commandGenerator.layerCommand$.next({
+      type: LayerCommandType.ADD_BEFORE,
+      ...arg
+    });
+  }
+
   setActiveLayer(arg: { uuid: string }): void {
     this.pixelDustEngine.layerManager.setActiveLayer(arg);
   }
 
-  deleteLayer(arg: { uuid: string | undefined }): void {
+  deleteLayer(arg: { uuid: string }): void {
     this.pixelDustEngine.commandGenerator.layerCommand$.next({
       type: LayerCommandType.DELETE,
       ...arg
