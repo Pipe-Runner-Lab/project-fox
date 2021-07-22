@@ -11,7 +11,7 @@ class PixelCanvas {
 
   canvasType: CanvasType;
 
-  constructor(canvasType: CanvasType, dimension: number, mountTarget: HTMLDivElement, id?: string) {
+  constructor(canvasType: CanvasType, dimension: number, uuid: string) {
     this.dimension = dimension;
     this.canvasType = canvasType;
     this.tileDimension = dimension / canvasType;
@@ -19,9 +19,7 @@ class PixelCanvas {
     this.canvas.classList.add('pixel-canvas');
     this.canvas.height = dimension;
     this.canvas.width = dimension;
-    if (id) this.canvas.setAttribute('id', id);
-
-    mountTarget.appendChild(this.canvas);
+    this.canvas.setAttribute('id', uuid);
 
     const ctx = this.canvas.getContext('2d');
     if (ctx) {
@@ -29,10 +27,6 @@ class PixelCanvas {
     } else {
       throw Error('Context is null');
     }
-  }
-
-  deRegister(mountTarget: HTMLDivElement): void {
-    mountTarget.removeChild(this.canvas);
   }
 
   draw(x: number, y: number, color: string): void {

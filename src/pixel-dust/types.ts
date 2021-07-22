@@ -32,7 +32,7 @@ export type AddLayerBefore = {
 
 export type DeleteLayer = {
   type: LayerCommandType.DELETE;
-  uuid: string | undefined;
+  uuid: string;
 };
 
 export type ExtendedAddLayerAfter = AddLayerAfter & {

@@ -21,7 +21,7 @@ class LayerManager {
 
   canvasType: CanvasType;
 
-  canvasContainerElement: HTMLDivElement;
+  canvasLayerWrapperElement: HTMLDivElement;
 
   activeLayer: Layer | null = null;
 
@@ -33,7 +33,11 @@ class LayerManager {
     this.layerStack = [];
     this.dimension = options.dimension;
     this.canvasType = options.canvasType;
-    this.canvasContainerElement = options.canvasContainerElement;
+
+    this.canvasLayerWrapperElement = document.createElement('div');
+    this.canvasLayerWrapperElement.classList.add('canvas-layer-wrapper');
+
+    options.canvasContainerElement.appendChild(this.canvasLayerWrapperElement);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -72,14 +76,10 @@ class LayerManager {
     if (!arg?.uuid) {
       const uuid = uuidv4();
       const layer = {
-        pixelCanvas: new PixelCanvas(
-          this.canvasType,
-          this.dimension,
-          this.canvasContainerElement,
-          uuid
-        ),
+        pixelCanvas: new PixelCanvas(this.canvasType, this.dimension, uuid),
         uuid
       };
+      this.canvasLayerWrapperElement.appendChild(layer.pixelCanvas.canvas);
       this.layerStack.push(layer);
 
       if (this.layerStackUpdateCB)
@@ -92,15 +92,11 @@ class LayerManager {
 
       return layer;
     }
-    // TODO
+
+    // TODO: If uuid provided
     const uuid = uuidv4();
     const layer = {
-      pixelCanvas: new PixelCanvas(
-        this.canvasType,
-        this.dimension,
-        this.canvasContainerElement,
-        uuid
-      ),
+      pixelCanvas: new PixelCanvas(this.canvasType, this.dimension, uuid),
       uuid
     };
     this.layerStack.push(layer);
@@ -108,46 +104,55 @@ class LayerManager {
   }
 
   addLayerBefore(arg: { uuid: string }): Layer {
-    if (!arg.uuid) {
-      const uuid = uuidv4();
-      const layer = {
-        pixelCanvas: new PixelCanvas(
-          this.canvasType,
-          this.dimension,
-          this.canvasContainerElement,
-          uuid
-        ),
-        uuid
-      };
-      this.layerStack.push(layer);
-      return layer;
+    console.log(arg);
+    const uuid = uuidv4();
+    const layer = {
+      pixelCanvas: new PixelCanvas(this.canvasType, this.dimension, uuid),
+      uuid
+    };
+
+    for (let idx = 0, { length } = this.layerStack; idx < length; idx += 1) {
+      if (this.layerStack[idx].uuid === arg.uuid) {
+        this.canvasLayerWrapperElement.insertBefore(
+          layer.pixelCanvas.canvas,
+          this.layerStack[idx].pixelCanvas.canvas
+        );
+        this.layerStack.splice(idx, 0, layer);
+        break;
+      }
     }
 
-    throw new Error('UUID needed for adding layer before a layer');
+    if (this.layerStackUpdateCB)
+      this.layerStackUpdateCB(
+        this.layerStack.map((_layer) => ({
+          uuid: _layer.uuid,
+          imagePreview: _layer.imagePreview
+        }))
+      );
+
+    return layer;
   }
 
-  deleteLayer(arg: { uuid: string | undefined }): void {
-    if (arg.uuid) {
-      const [selectedLayer, ...rest] = this.layerStack.filter((layer) => layer.uuid === arg.uuid);
-      if (rest.length > 0) {
-        throw Error('uuid matches more than one layer');
-      }
-      if (!selectedLayer) {
-        throw Error('uuid does not match any layer');
-      }
-      selectedLayer.pixelCanvas.deRegister(this.canvasContainerElement);
-      this.layerStack = this.layerStack.filter((layer) => layer.uuid !== selectedLayer.uuid);
-
-      if (this.layerStackUpdateCB)
-        this.layerStackUpdateCB(
-          this.layerStack.map((_layer) => ({
-            uuid: _layer.uuid,
-            imagePreview: _layer.imagePreview
-          }))
-        );
-
-      this.setActiveLayer(null);
+  deleteLayer(arg: { uuid: string }): void {
+    const [selectedLayer, ...rest] = this.layerStack.filter((layer) => layer.uuid === arg.uuid);
+    if (rest.length > 0) {
+      throw Error('uuid matches more than one layer');
     }
+    if (!selectedLayer) {
+      throw Error('uuid does not match any layer');
+    }
+    this.canvasLayerWrapperElement.removeChild(selectedLayer.pixelCanvas.canvas);
+    this.layerStack = this.layerStack.filter((layer) => layer.uuid !== selectedLayer.uuid);
+
+    if (this.layerStackUpdateCB)
+      this.layerStackUpdateCB(
+        this.layerStack.map((_layer) => ({
+          uuid: _layer.uuid,
+          imagePreview: _layer.imagePreview
+        }))
+      );
+
+    this.setActiveLayer(null);
   }
 
   updateLayerPreview(): void {

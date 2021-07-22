@@ -7,6 +7,7 @@ import {
   AddLayerButton,
   DeleteLayerButton,
   Divider,
+  LayerGap,
   LayerCard,
   LayerContainer,
   LayerInteractionContainer,
@@ -17,14 +18,16 @@ import {
 type LayerBoxProps = {
   layerStack: LayerMetaData[];
   activeLayer: LayerMetaData | null;
+  addLayerBefore: (arg: { uuid: string }) => void;
   addLayerAfter: (arg?: { uuid?: string }) => void;
   setActiveLayer: (arg: { uuid: string }) => void;
-  deleteLayer: (arg: { uuid: string | undefined }) => void;
+  deleteLayer: (arg: { uuid: string }) => void;
 };
 
 function LayerBox({
   layerStack,
   activeLayer,
+  addLayerBefore,
   addLayerAfter,
   setActiveLayer,
   deleteLayer
@@ -36,21 +39,33 @@ function LayerBox({
           <AddLayerIcon />
         </AddLayerButton>
         <Divider />
-        <DeleteLayerButton onClick={() => deleteLayer({ uuid: activeLayer?.uuid })}>
+        <DeleteLayerButton
+          onClick={() => {
+            if (activeLayer?.uuid) deleteLayer({ uuid: activeLayer.uuid });
+          }}>
           <DeleteLayerIcon />
         </DeleteLayerButton>
       </LayerInteractionContainer>
       <LayerStackContainer>
-        <Scrollbars autoHide autoHideTimeout={500} style={{ height: '100%' }}>
+        <Scrollbars
+          autoHide
+          autoHideTimeout={500}
+          renderTrackHorizontal={() => <div style={{ display: 'none' }} />}
+          style={{ height: '100%' }}>
           <LayerStackWrapper>
-            {[...layerStack].reverse().map((layer: LayerMetaData) => (
-              <LayerCard
-                key={layer.uuid}
-                id={layer.uuid}
-                active={layer.uuid === activeLayer?.uuid}
-                onClick={() => setActiveLayer({ uuid: layer.uuid })}
-                imageUrl={layer.imagePreview}
-              />
+            {layerStack.map((layer: LayerMetaData) => (
+              <React.Fragment key={layer.uuid}>
+                <LayerCard
+                  id={layer.uuid}
+                  active={layer.uuid === activeLayer?.uuid}
+                  onClick={() => setActiveLayer({ uuid: layer.uuid })}
+                  imageUrl={layer.imagePreview}
+                />
+                <LayerGap
+                  key={`${layer.uuid}-layer-gap`}
+                  onClick={() => addLayerBefore({ uuid: layer.uuid })}
+                />
+              </React.Fragment>
             ))}
           </LayerStackWrapper>
         </Scrollbars>

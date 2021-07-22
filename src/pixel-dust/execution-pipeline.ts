@@ -56,6 +56,7 @@ class ExecutionPipeline {
             return { ...command, generatedUuid };
           }
           case LayerCommandType.ADD_BEFORE: {
+            console.log(command);
             const { uuid: generatedUuid } = this.layerManager.addLayerBefore({
               uuid: command.uuid
             });
