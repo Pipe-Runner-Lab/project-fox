@@ -85,7 +85,7 @@ class ExecutionPipeline {
       layerCommand$
     });
 
-    drawCommand$.pipe(debounceTime(2500)).subscribe({
+    drawCommand$.pipe(debounceTime(500)).subscribe({
       next: () => {
         this.layerManager.updateLayerPreview();
       }
