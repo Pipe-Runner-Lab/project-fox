@@ -47,6 +47,18 @@ class PixelCanvas {
       this.tileDimension
     );
   }
+
+  getCanvasBlob(type?: string, quality?: number): Promise<Blob | null> {
+    return new Promise((resolve) => {
+      this.canvas.toBlob(
+        (blob) => {
+          resolve(blob);
+        },
+        type ?? 'img/png',
+        quality
+      );
+    });
+  }
 }
 
 export default PixelCanvas;

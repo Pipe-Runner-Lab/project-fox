@@ -198,13 +198,29 @@ class LayerManager {
     this.setActiveLayer(null);
   }
 
-  updateLayerPreview(): void {
+  async updateLayerPreview(): Promise<void> {
+    const promiseArray = [];
+
     for (let idx = 0, { length } = this.layerStack; idx < length; idx += 1) {
       const layer = this.layerStack[idx];
-      layer.imagePreview = layer.pixelCanvas.canvas.toDataURL('img/png');
+      promiseArray.push(layer.pixelCanvas.getCanvasBlob());
     }
 
-    if (this.layerStackUpdateCB) this.layerStackUpdateCB(this.layerStack);
+    const blobArray = await Promise.all(promiseArray);
+
+    for (let idx = 0, { length } = this.layerStack; idx < length; idx += 1) {
+      const layer = this.layerStack[idx];
+      layer.imagePreview = blobArray[idx] ? URL.createObjectURL(blobArray[idx]) : undefined;
+    }
+
+    if (this.layerStackUpdateCB)
+      this.layerStackUpdateCB(
+        this.layerStack.map((_layer) => ({
+          uuid: _layer.uuid,
+          imagePreview: _layer.imagePreview,
+          hidden: _layer.hidden
+        }))
+      );
   }
 }
 
