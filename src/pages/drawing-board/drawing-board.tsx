@@ -73,6 +73,20 @@ function DrawingBoard(): JSX.Element {
     [pixelDustBoardRef]
   );
 
+  const insertLayerAfterOnEngine = useCallback(
+    (arg: { uuid: string; destinationUuid: string }): void => {
+      pixelDustBoardRef.current?.pixelDustApi?.insertLayerAfter(arg);
+    },
+    [pixelDustBoardRef]
+  );
+
+  const insertLayerBeforeOnEngine = useCallback(
+    (arg: { uuid: string; destinationUuid: string }): void => {
+      pixelDustBoardRef.current?.pixelDustApi?.insertLayerBefore(arg);
+    },
+    [pixelDustBoardRef]
+  );
+
   return (
     <DrawingBoardContainer>
       <ToolBoxWrapper>
@@ -103,6 +117,8 @@ function DrawingBoard(): JSX.Element {
           activeLayer={activeLayer}
           hideLayer={hideLayerOnEngine}
           showLayer={showLayerOnEngine}
+          insertLayerAfter={insertLayerAfterOnEngine}
+          insertLayerBefore={insertLayerBeforeOnEngine}
         />
       </LayerBoxWrapper>
     </DrawingBoardContainer>

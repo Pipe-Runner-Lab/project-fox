@@ -29,6 +29,8 @@ type LayerBoxProps = {
   deleteLayer: (arg: { uuid: string }) => void;
   hideLayer: (arg: { uuid: string }) => void;
   showLayer: (arg: { uuid: string }) => void;
+  insertLayerBefore: (arg: { uuid: string; destinationUuid: string }) => void;
+  insertLayerAfter: (arg: { uuid: string; destinationUuid: string }) => void;
 };
 
 function LayerBox({
@@ -39,8 +41,12 @@ function LayerBox({
   setActiveLayer,
   deleteLayer,
   hideLayer,
-  showLayer
+  showLayer,
+  insertLayerBefore,
+  insertLayerAfter
 }: LayerBoxProps): JSX.Element {
+  const numLayers = layerStack.length;
+
   return (
     <LayerContainer>
       <LayerInteractionContainer>
@@ -62,25 +68,43 @@ function LayerBox({
           renderTrackHorizontal={() => <div style={{ display: 'none' }} />}
           style={{ height: '100%' }}>
           <LayerStackWrapper>
-            {layerStack.map((layer: LayerMetaData) => (
+            {layerStack.map((layer: LayerMetaData, idx: number) => (
               <React.Fragment key={layer.uuid}>
                 <LayerCard
                   id={layer.uuid}
                   active={layer.uuid === activeLayer?.uuid}
                   onClick={() => setActiveLayer({ uuid: layer.uuid })}
                   imageUrl={layer.imagePreview}>
-                  <LayerCardOverlay disabled={layer.hidden}>
-                    <ArrowIconWrapper>
+                  <LayerCardOverlay layerHidden={layer.hidden}>
+                    <ArrowIconWrapper
+                      onClick={() => {
+                        if (idx !== 0) {
+                          insertLayerAfter({
+                            destinationUuid: layerStack[idx - 1].uuid,
+                            uuid: layer.uuid
+                          });
+                        }
+                      }}
+                      disabled={idx === 0}>
                       <UpwardArrowIcon />
                     </ArrowIconWrapper>
-                    <HideToggleIconWrapper disabled={layer.hidden}>
+                    <HideToggleIconWrapper layerHidden={layer.hidden}>
                       {layer.hidden ? (
                         <HiddenIcon onClick={() => showLayer({ uuid: layer.uuid })} />
                       ) : (
                         <VisibleIcon onClick={() => hideLayer({ uuid: layer.uuid })} />
                       )}
                     </HideToggleIconWrapper>
-                    <ArrowIconWrapper>
+                    <ArrowIconWrapper
+                      onClick={() => {
+                        if (idx !== numLayers - 1) {
+                          insertLayerBefore({
+                            destinationUuid: layerStack[idx + 1].uuid,
+                            uuid: layer.uuid
+                          });
+                        }
+                      }}
+                      disabled={idx === numLayers - 1}>
                       <DownwardArrowIcon />
                     </ArrowIconWrapper>
                   </LayerCardOverlay>

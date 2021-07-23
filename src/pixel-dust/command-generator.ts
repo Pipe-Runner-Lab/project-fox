@@ -9,7 +9,9 @@ import {
   AddLayerBefore,
   DeleteLayer,
   HideLayer,
-  ShowLayer
+  ShowLayer,
+  InsertLayerAfter,
+  InsertLayerBefore
 } from './types';
 
 type CommandGeneratorProps = {
@@ -24,7 +26,13 @@ class CommandGenerator {
   canvasCommand$: Observable<PenCommand | EraserCommand>;
 
   layerCommand$ = new Subject<
-    AddLayerAfter | AddLayerBefore | DeleteLayer | HideLayer | ShowLayer
+    | AddLayerAfter
+    | AddLayerBefore
+    | DeleteLayer
+    | HideLayer
+    | ShowLayer
+    | InsertLayerAfter
+    | InsertLayerBefore
   >();
 
   drawingState = {

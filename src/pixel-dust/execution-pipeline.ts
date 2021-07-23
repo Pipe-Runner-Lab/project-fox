@@ -74,6 +74,20 @@ class ExecutionPipeline {
             this.layerManager.showLayer({ uuid: command.uuid });
             return command;
           }
+          case LayerCommandType.INSERT_AFTER: {
+            this.layerManager.insertLayerAfter({
+              uuid: command.uuid,
+              destinationUuid: command.destinationUuid
+            });
+            return command;
+          }
+          case LayerCommandType.INSERT_BEFORE: {
+            this.layerManager.insertLayerBefore({
+              uuid: command.uuid,
+              destinationUuid: command.destinationUuid
+            });
+            return command;
+          }
           default:
             throw new Error('Layer command not supported');
         }

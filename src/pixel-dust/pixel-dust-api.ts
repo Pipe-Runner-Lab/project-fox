@@ -91,6 +91,20 @@ class PixelDustApi {
       ...arg
     });
   }
+
+  insertLayerAfter(arg: { uuid: string; destinationUuid: string }): void {
+    this.pixelDustEngine.commandGenerator.layerCommand$.next({
+      type: LayerCommandType.INSERT_AFTER,
+      ...arg
+    });
+  }
+
+  insertLayerBefore(arg: { uuid: string; destinationUuid: string }): void {
+    this.pixelDustEngine.commandGenerator.layerCommand$.next({
+      type: LayerCommandType.INSERT_BEFORE,
+      ...arg
+    });
+  }
 }
 
 export { CanvasType, InstrumentType };

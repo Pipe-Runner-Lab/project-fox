@@ -81,14 +81,14 @@ export const LayerCard = styled.div<{ active: boolean; imageUrl?: string }>`
   cursor: pointer;
 `;
 
-export const LayerCardOverlay = styled.div<{ disabled?: boolean }>`
+export const LayerCardOverlay = styled.div<{ layerHidden?: boolean }>`
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   padding: 4px;
   ${(props) =>
-    props.disabled
+    props.layerHidden
       ? 'backdrop-filter: grayscale(100%) blur(2px); background: rgba(209, 213, 219, 0.4);'
       : undefined}
 
@@ -97,33 +97,38 @@ export const LayerCardOverlay = styled.div<{ disabled?: boolean }>`
   }
 `;
 
-export const ArrowIconWrapper = styled.div`
+export const ArrowIconWrapper = styled.div<{ disabled?: boolean }>`
   height: 32px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  color: #9b9ea5;
-  background-color: rgba(209, 213, 219, 0.7);
-  border-radius: 5px;
-  backdrop-filter: blur(2px);
-  transition: all 200ms ease-in;
   opacity: 0;
 
-  &:hover {
-    opacity: 1;
-  }
+  ${(props) =>
+    !props.disabled
+      ? ` justify-content: center;
+          align-items: center;
+          font-size: 18px;
+          color: #9b9ea5;
+          background-color: rgba(209, 213, 219, 0.7);
+          border-radius: 5px;
+          backdrop-filter: blur(2px);
+          transition: all 200ms ease-in;
+          opacity: 0;
+
+          &:hover {
+            opacity: 1;
+          }`
+      : undefined}
 `;
 
-export const HideToggleIconWrapper = styled.div<{ disabled?: boolean }>`
+export const HideToggleIconWrapper = styled.div<{ layerHidden?: boolean }>`
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${(props) => (props.disabled ? '#ec4899' : '#9b9ea5')};
+  color: ${(props) => (props.layerHidden ? '#ec4899' : '#9b9ea5')};
   font-size: 24px;
   transition: all 200ms ease-in;
-  opacity: ${(props) => (props.disabled ? 1 : 0)};
+  opacity: ${(props) => (props.layerHidden ? 1 : 0)};
 
   &:hover {
     opacity: 1;

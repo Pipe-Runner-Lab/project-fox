@@ -20,7 +20,9 @@ export enum LayerCommandType {
   DELETE = 'DELETE',
   REARRANGE = 'REARRANGE',
   HIDE = 'HIDE',
-  SHOW = 'SHOW'
+  SHOW = 'SHOW',
+  INSERT_BEFORE = 'INSERT_BEFORE',
+  INSERT_AFTER = 'INSERT_AFTER'
 }
 
 export type AddLayerAfter = {
@@ -46,6 +48,18 @@ export type HideLayer = {
 export type ShowLayer = {
   type: LayerCommandType.SHOW;
   uuid: string;
+};
+
+export type InsertLayerBefore = {
+  type: LayerCommandType.INSERT_BEFORE;
+  uuid: string;
+  destinationUuid: string;
+};
+
+export type InsertLayerAfter = {
+  type: LayerCommandType.INSERT_AFTER;
+  uuid: string;
+  destinationUuid: string;
 };
 
 export type ExtendedAddLayerAfter = AddLayerAfter & {

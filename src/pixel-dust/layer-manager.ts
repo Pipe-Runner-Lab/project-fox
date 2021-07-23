@@ -198,6 +198,75 @@ class LayerManager {
     this.setActiveLayer(null);
   }
 
+  insertLayerBefore(arg: { destinationUuid: string; uuid: string }): void {
+    const destinationLayer = this.layerStack.find((_layer) => _layer.uuid === arg.destinationUuid);
+    const layer = this.layerStack.find((_layer) => _layer.uuid === arg.uuid);
+
+    if (layer && destinationLayer) {
+      const filteredLayerStack = this.layerStack.filter((_layer) => _layer.uuid !== arg.uuid);
+
+      for (let idx = 0, { length } = filteredLayerStack; idx < length; idx += 1) {
+        if (filteredLayerStack[idx].uuid === arg.destinationUuid) {
+          filteredLayerStack.splice(idx, 0, layer);
+
+          this.layerStack = filteredLayerStack;
+
+          this.canvasLayerWrapperElement.insertBefore(
+            layer.pixelCanvas.canvas,
+            destinationLayer.pixelCanvas.canvas
+          );
+          break;
+        }
+      }
+
+      if (this.layerStackUpdateCB)
+        this.layerStackUpdateCB(
+          this.layerStack.map((_layer) => ({
+            uuid: _layer.uuid,
+            imagePreview: _layer.imagePreview,
+            hidden: _layer.hidden
+          }))
+        );
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  insertLayerAfter(arg: { destinationUuid: string; uuid: string }): void {
+    const destinationLayer = this.layerStack.find((_layer) => _layer.uuid === arg.destinationUuid);
+    const layer = this.layerStack.find((_layer) => _layer.uuid === arg.uuid);
+
+    if (layer && destinationLayer) {
+      const filteredLayerStack = this.layerStack.filter((_layer) => _layer.uuid !== arg.uuid);
+
+      for (let idx = 0, { length } = filteredLayerStack; idx < length; idx += 1) {
+        if (filteredLayerStack[idx].uuid === arg.destinationUuid) {
+          if (idx === filteredLayerStack.length - 1) {
+            filteredLayerStack.push(layer);
+          } else {
+            filteredLayerStack.splice(idx + 1, 0, layer);
+          }
+
+          this.layerStack = filteredLayerStack;
+
+          this.canvasLayerWrapperElement.insertBefore(
+            layer.pixelCanvas.canvas,
+            destinationLayer.pixelCanvas.canvas.nextSibling
+          );
+          break;
+        }
+      }
+
+      if (this.layerStackUpdateCB)
+        this.layerStackUpdateCB(
+          this.layerStack.map((_layer) => ({
+            uuid: _layer.uuid,
+            imagePreview: _layer.imagePreview,
+            hidden: _layer.hidden
+          }))
+        );
+    }
+  }
+
   async updateLayerPreview(): Promise<void> {
     const promiseArray = [];
 
