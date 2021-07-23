@@ -67,6 +67,20 @@ class PixelDustApi {
     });
   }
 
+  hideLayer(arg: { uuid: string }): void {
+    this.pixelDustEngine.commandGenerator.layerCommand$.next({
+      type: LayerCommandType.HIDE,
+      ...arg
+    });
+  }
+
+  showLayer(arg: { uuid: string }): void {
+    this.pixelDustEngine.commandGenerator.layerCommand$.next({
+      type: LayerCommandType.SHOW,
+      ...arg
+    });
+  }
+
   setActiveLayer(arg: { uuid: string }): void {
     this.pixelDustEngine.layerManager.setActiveLayer(arg);
   }

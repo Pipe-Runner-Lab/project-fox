@@ -66,6 +66,14 @@ class ExecutionPipeline {
             this.layerManager.deleteLayer({ uuid: command.uuid });
             return command;
           }
+          case LayerCommandType.HIDE: {
+            this.layerManager.hideLayer({ uuid: command.uuid });
+            return command;
+          }
+          case LayerCommandType.SHOW: {
+            this.layerManager.showLayer({ uuid: command.uuid });
+            return command;
+          }
           default:
             throw new Error('Layer command not supported');
         }

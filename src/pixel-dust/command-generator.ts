@@ -7,7 +7,9 @@ import {
   InstrumentType,
   AddLayerAfter,
   AddLayerBefore,
-  DeleteLayer
+  DeleteLayer,
+  HideLayer,
+  ShowLayer
 } from './types';
 
 type CommandGeneratorProps = {
@@ -21,7 +23,9 @@ type CommandGeneratorProps = {
 class CommandGenerator {
   canvasCommand$: Observable<PenCommand | EraserCommand>;
 
-  layerCommand$ = new Subject<AddLayerAfter | AddLayerBefore | DeleteLayer>();
+  layerCommand$ = new Subject<
+    AddLayerAfter | AddLayerBefore | DeleteLayer | HideLayer | ShowLayer
+  >();
 
   drawingState = {
     foregroundColor: 'black',

@@ -4,12 +4,16 @@ import {
   ExtendedAddLayerBefore,
   DeleteLayer,
   ExtendedPenCommand,
-  ExtendedEraseCommand
+  ExtendedEraseCommand,
+  HideLayer,
+  ShowLayer
 } from './types';
 
 type CommandHistoryProps = {
   drawCommand$: Observable<ExtendedPenCommand | ExtendedEraseCommand>;
-  layerCommand$: Observable<ExtendedAddLayerAfter | ExtendedAddLayerBefore | DeleteLayer>;
+  layerCommand$: Observable<
+    ExtendedAddLayerAfter | ExtendedAddLayerBefore | DeleteLayer | HideLayer | ShowLayer
+  >;
 };
 
 type Command =
@@ -17,7 +21,9 @@ type Command =
   | ExtendedEraseCommand
   | ExtendedAddLayerAfter
   | ExtendedAddLayerBefore
-  | DeleteLayer;
+  | DeleteLayer
+  | HideLayer
+  | ShowLayer;
 
 class CommandHistory {
   redoStack: Command[] = [];

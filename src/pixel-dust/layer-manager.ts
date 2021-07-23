@@ -6,6 +6,7 @@ export type Layer = {
   pixelCanvas: PixelCanvas;
   uuid: string;
   imagePreview?: string;
+  hidden: boolean;
 };
 
 type LayerManagerProps = {
@@ -77,7 +78,8 @@ class LayerManager {
       const uuid = uuidv4();
       const layer = {
         pixelCanvas: new PixelCanvas(this.canvasType, this.dimension, uuid),
-        uuid
+        uuid,
+        hidden: false
       };
       this.canvasLayerWrapperElement.appendChild(layer.pixelCanvas.canvas);
       this.layerStack.push(layer);
@@ -86,7 +88,8 @@ class LayerManager {
         this.layerStackUpdateCB(
           this.layerStack.map((_layer) => ({
             uuid: _layer.uuid,
-            imagePreview: _layer.imagePreview
+            imagePreview: _layer.imagePreview,
+            hidden: _layer.hidden
           }))
         );
 
@@ -97,10 +100,47 @@ class LayerManager {
     const uuid = uuidv4();
     const layer = {
       pixelCanvas: new PixelCanvas(this.canvasType, this.dimension, uuid),
-      uuid
+      uuid,
+      hidden: false
     };
     this.layerStack.push(layer);
     return layer;
+  }
+
+  hideLayer(arg: { uuid: string }): void {
+    const layer = this.layerStack.find((_layer) => _layer.uuid === arg.uuid);
+
+    if (layer) {
+      layer.hidden = true;
+      layer.pixelCanvas.canvas.style.setProperty('opacity', '0');
+    }
+
+    if (this.layerStackUpdateCB)
+      this.layerStackUpdateCB(
+        this.layerStack.map((_layer) => ({
+          uuid: _layer.uuid,
+          imagePreview: _layer.imagePreview,
+          hidden: _layer.hidden
+        }))
+      );
+  }
+
+  showLayer(arg: { uuid: string }): void {
+    const layer = this.layerStack.find((_layer) => _layer.uuid === arg.uuid);
+
+    if (layer) {
+      layer.hidden = false;
+      layer.pixelCanvas.canvas.style.setProperty('opacity', '1');
+    }
+
+    if (this.layerStackUpdateCB)
+      this.layerStackUpdateCB(
+        this.layerStack.map((_layer) => ({
+          uuid: _layer.uuid,
+          imagePreview: _layer.imagePreview,
+          hidden: _layer.hidden
+        }))
+      );
   }
 
   addLayerBefore(arg: { uuid: string }): Layer {
@@ -108,7 +148,8 @@ class LayerManager {
     const uuid = uuidv4();
     const layer = {
       pixelCanvas: new PixelCanvas(this.canvasType, this.dimension, uuid),
-      uuid
+      uuid,
+      hidden: false
     };
 
     for (let idx = 0, { length } = this.layerStack; idx < length; idx += 1) {
@@ -126,7 +167,8 @@ class LayerManager {
       this.layerStackUpdateCB(
         this.layerStack.map((_layer) => ({
           uuid: _layer.uuid,
-          imagePreview: _layer.imagePreview
+          imagePreview: _layer.imagePreview,
+          hidden: _layer.hidden
         }))
       );
 
@@ -148,7 +190,8 @@ class LayerManager {
       this.layerStackUpdateCB(
         this.layerStack.map((_layer) => ({
           uuid: _layer.uuid,
-          imagePreview: _layer.imagePreview
+          imagePreview: _layer.imagePreview,
+          hidden: _layer.hidden
         }))
       );
 

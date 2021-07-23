@@ -59,6 +59,20 @@ function DrawingBoard(): JSX.Element {
     [pixelDustBoardRef]
   );
 
+  const hideLayerOnEngine = useCallback(
+    (arg: { uuid: string }): void => {
+      pixelDustBoardRef.current?.pixelDustApi?.hideLayer(arg);
+    },
+    [pixelDustBoardRef]
+  );
+
+  const showLayerOnEngine = useCallback(
+    (arg: { uuid: string }): void => {
+      pixelDustBoardRef.current?.pixelDustApi?.showLayer(arg);
+    },
+    [pixelDustBoardRef]
+  );
+
   return (
     <DrawingBoardContainer>
       <ToolBoxWrapper>
@@ -87,6 +101,8 @@ function DrawingBoard(): JSX.Element {
           deleteLayer={deleteLayerOnEngine}
           layerStack={layerStack}
           activeLayer={activeLayer}
+          hideLayer={hideLayerOnEngine}
+          showLayer={showLayerOnEngine}
         />
       </LayerBoxWrapper>
     </DrawingBoardContainer>

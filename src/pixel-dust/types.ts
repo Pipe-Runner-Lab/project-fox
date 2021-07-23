@@ -11,13 +11,16 @@ export enum CanvasType {
 export type LayerMetaData = {
   uuid: string;
   imagePreview?: string;
+  hidden: boolean;
 };
 
 export enum LayerCommandType {
   ADD_AFTER = 'ADD_AFTER',
   ADD_BEFORE = 'ADD_BEFORE',
   DELETE = 'DELETE',
-  REARRANGE = 'REARRANGE'
+  REARRANGE = 'REARRANGE',
+  HIDE = 'HIDE',
+  SHOW = 'SHOW'
 }
 
 export type AddLayerAfter = {
@@ -32,6 +35,16 @@ export type AddLayerBefore = {
 
 export type DeleteLayer = {
   type: LayerCommandType.DELETE;
+  uuid: string;
+};
+
+export type HideLayer = {
+  type: LayerCommandType.HIDE;
+  uuid: string;
+};
+
+export type ShowLayer = {
+  type: LayerCommandType.SHOW;
   uuid: string;
 };
 

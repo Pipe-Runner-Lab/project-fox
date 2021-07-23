@@ -2,6 +2,8 @@ import React from 'react';
 import { LayerMetaData } from 'pixel-dust/pixel-dust-api';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { VscAdd as AddLayerIcon, VscRemove as DeleteLayerIcon } from 'react-icons/vsc';
+import { BiUpArrow as UpwardArrowIcon, BiDownArrow as DownwardArrowIcon } from 'react-icons/bi';
+import { BsEye as VisibleIcon, BsEyeSlash as HiddenIcon } from 'react-icons/bs';
 
 import {
   AddLayerButton,
@@ -9,10 +11,13 @@ import {
   Divider,
   LayerGap,
   LayerCard,
+  LayerCardOverlay,
   LayerContainer,
   LayerInteractionContainer,
   LayerStackContainer,
-  LayerStackWrapper
+  LayerStackWrapper,
+  ArrowIconWrapper,
+  HideToggleIconWrapper
 } from './layer-box.styles';
 
 type LayerBoxProps = {
@@ -22,6 +27,8 @@ type LayerBoxProps = {
   addLayerAfter: (arg?: { uuid?: string }) => void;
   setActiveLayer: (arg: { uuid: string }) => void;
   deleteLayer: (arg: { uuid: string }) => void;
+  hideLayer: (arg: { uuid: string }) => void;
+  showLayer: (arg: { uuid: string }) => void;
 };
 
 function LayerBox({
@@ -30,7 +37,9 @@ function LayerBox({
   addLayerBefore,
   addLayerAfter,
   setActiveLayer,
-  deleteLayer
+  deleteLayer,
+  hideLayer,
+  showLayer
 }: LayerBoxProps): JSX.Element {
   return (
     <LayerContainer>
@@ -59,8 +68,23 @@ function LayerBox({
                   id={layer.uuid}
                   active={layer.uuid === activeLayer?.uuid}
                   onClick={() => setActiveLayer({ uuid: layer.uuid })}
-                  imageUrl={layer.imagePreview}
-                />
+                  imageUrl={layer.imagePreview}>
+                  <LayerCardOverlay disabled={layer.hidden}>
+                    <ArrowIconWrapper>
+                      <UpwardArrowIcon />
+                    </ArrowIconWrapper>
+                    <HideToggleIconWrapper disabled={layer.hidden}>
+                      {layer.hidden ? (
+                        <HiddenIcon onClick={() => showLayer({ uuid: layer.uuid })} />
+                      ) : (
+                        <VisibleIcon onClick={() => hideLayer({ uuid: layer.uuid })} />
+                      )}
+                    </HideToggleIconWrapper>
+                    <ArrowIconWrapper>
+                      <DownwardArrowIcon />
+                    </ArrowIconWrapper>
+                  </LayerCardOverlay>
+                </LayerCard>
                 <LayerGap
                   key={`${layer.uuid}-layer-gap`}
                   onClick={() => addLayerBefore({ uuid: layer.uuid })}
