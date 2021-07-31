@@ -1,5 +1,15 @@
 import { fromEvent, Observable, concat } from 'rxjs';
-import { switchMap, filter, takeUntil, repeat, take, skip, tap, map } from 'rxjs/operators';
+import {
+  switchMap,
+  filter,
+  takeUntil,
+  repeat,
+  tap,
+  map,
+  first,
+  takeWhile,
+  endWith
+} from 'rxjs/operators';
 
 type EventManagerProps = {
   canvasContainerElement: HTMLDivElement;
@@ -15,7 +25,8 @@ class EventManager {
     prevX: 0,
     prevY: 0,
     initX: 0,
-    initY: 0
+    initY: 0,
+    isMoving: false
   };
 
   canvasScaleCache = {
@@ -32,6 +43,11 @@ class EventManager {
     y: number;
   }>;
 
+  canvasPreview$: Observable<{
+    x: number;
+    y: number;
+  }>;
+
   canvasScale$: Observable<{
     scale: number;
   }>;
@@ -42,57 +58,70 @@ class EventManager {
 
     const mouseDown$ = fromEvent<MouseEvent>(this.targetElement, 'mousedown');
     const mouseMove$ = fromEvent<MouseEvent>(this.targetElement, 'mousemove');
-    const mouseUp$ = fromEvent<MouseEvent>(document, 'mouseup');
+    const mouseUp$ = fromEvent<MouseEvent>(window, 'mouseup');
+    const mouseLeave$ = fromEvent<MouseEvent>(this.targetElement, 'mouseleave');
+
     const wheel$ = fromEvent<WheelEvent>(this.containerElement, 'wheel').pipe(
       tap((event: WheelEvent) => {
         event.preventDefault();
       })
     );
 
-    const spaceKeyDown$ = fromEvent<KeyboardEvent>(document, 'keydown').pipe(
-      filter((event: KeyboardEvent) => event.code.toLowerCase() === 'space')
+    const spaceKeyDown$ = fromEvent<KeyboardEvent>(window, 'keydown').pipe(
+      filter((event: KeyboardEvent) => event.code === 'Space')
     );
-    const spaceKeyUp$ = fromEvent<KeyboardEvent>(document, 'keyup').pipe(
-      filter((event: KeyboardEvent) => event.code.toLowerCase() === 'space')
+    const spaceKeyUp$ = fromEvent<KeyboardEvent>(window, 'keyup').pipe(
+      filter((event: KeyboardEvent) => event.code === 'Space')
     );
 
     this.canvasMove$ = spaceKeyDown$.pipe(
-      take(1),
+      first(),
+      tap(() => {
+        this.canvasMoveCache.isMoving = true;
+      }),
       switchMap(() => {
         return concat(
           mouseDown$.pipe(
-            take(1),
+            first(),
             tap((event: MouseEvent) => {
-              const { clientX: x, clientY: y } = event;
-              this.canvasMoveCache = {
-                ...this.canvasMoveCache,
-                prevX: x,
-                prevY: y
-              };
+              const { x, y } = event;
+              this.canvasMoveCache.prevX = x;
+              this.canvasMoveCache.prevY = y;
             })
           ),
           mouseMove$
-        ).pipe(takeUntil(mouseUp$));
+        );
       }),
-      skip(1),
       map((event: MouseEvent) => {
-        const { clientX: x, clientY: y } = event;
+        const { x, y } = event;
         const { prevX, prevY, initX, initY } = this.canvasMoveCache;
         const nextX = x - prevX + initX;
         const nextY = y - prevY + initY;
-        this.canvasMoveCache = {
-          prevX: x,
-          prevY: y,
-          initX: nextX,
-          initY: nextY
-        };
+
+        this.canvasMoveCache.prevX = x;
+        this.canvasMoveCache.prevY = y;
+        this.canvasMoveCache.initX = nextX;
+        this.canvasMoveCache.initY = nextY;
 
         return {
           x: nextX,
           y: nextY
         };
       }),
-      takeUntil(spaceKeyUp$),
+      takeUntil(
+        spaceKeyUp$.pipe(
+          tap(() => {
+            this.canvasMoveCache.isMoving = false;
+          })
+        )
+      ),
+      takeUntil(
+        mouseUp$.pipe(
+          tap(() => {
+            this.canvasMoveCache.isMoving = false;
+          })
+        )
+      ),
       repeat()
     );
 
@@ -125,10 +154,19 @@ class EventManager {
       })
     );
 
-    this.canvasDraw$ = concat(mouseDown$.pipe(take(1)), mouseMove$).pipe(
-      map((event: MouseEvent) => ({ x: event.offsetX, y: event.offsetY })),
-      takeUntil(this.canvasMove$),
+    this.canvasDraw$ = concat(mouseDown$.pipe(first()), mouseMove$).pipe(
+      takeWhile(() => !this.canvasMoveCache.isMoving),
       takeUntil(mouseUp$),
+      map((event: MouseEvent) => ({ x: event.offsetX, y: event.offsetY })),
+      repeat()
+    );
+
+    this.canvasPreview$ = mouseMove$.pipe(
+      takeUntil(mouseLeave$),
+      map((event: MouseEvent) => {
+        return { x: event.offsetX, y: event.offsetY };
+      }),
+      endWith({ x: NaN, y: NaN }),
       repeat()
     );
   }

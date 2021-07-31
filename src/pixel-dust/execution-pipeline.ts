@@ -1,7 +1,7 @@
 import { map, filter, tap, debounceTime } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
-import { LayerCommandType, InstrumentType } from './types';
+import { LayerCommandType, InstrumentType, PreviewType } from './types';
 import CommandHistory from './command-history';
 
 type ExecutionPipelineProps = {
@@ -19,6 +19,21 @@ class ExecutionPipeline {
   constructor(options: ExecutionPipelineProps) {
     this.layerManager = options.layerManager;
     this.commandGenerator = options.commandGenerator;
+
+    this.commandGenerator.previewCanvasCommand$.subscribe({
+      next: (command) => {
+        switch (command.instrument) {
+          case PreviewType.PEN:
+            console.log('preview pen', command.x, command.y, command.color);
+            break;
+          case PreviewType.CLEANUP:
+            console.log('preview cleanup');
+            break;
+          default:
+            break;
+        }
+      }
+    });
 
     const drawCommand$ = this.commandGenerator.canvasCommand$.pipe(
       filter(() => !!this.layerManager.activeLayer),

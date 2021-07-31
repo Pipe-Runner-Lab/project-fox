@@ -83,6 +83,11 @@ export enum InstrumentType {
   COLOR_PICKER = 'COLOR_PICKER'
 }
 
+export enum PreviewType {
+  PEN = 'PEN',
+  CLEANUP = 'CLEANUP'
+}
+
 type BaseCommand = {
   x: number;
   y: number;
@@ -95,6 +100,15 @@ export type PenCommand = BaseCommand & {
 
 export type EraserCommand = BaseCommand & {
   instrument: InstrumentType.ERASER;
+};
+
+export type PreviewPenCommand = BaseCommand & {
+  instrument: PreviewType.PEN;
+  color: string;
+};
+
+export type PreviewCleanupCommand = BaseCommand & {
+  instrument: PreviewType.CLEANUP;
 };
 
 /** Command History types */

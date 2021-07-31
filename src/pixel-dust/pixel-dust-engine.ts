@@ -81,7 +81,8 @@ class PixelDustEngine {
     this.commandGenerator = new CommandGenerator({
       dimension,
       canvasType,
-      drawStream: this.eventManager.canvasDraw$
+      drawStream: this.eventManager.canvasDraw$,
+      previewStream: this.eventManager.canvasPreview$
     });
 
     // Initialize execution pipeline
