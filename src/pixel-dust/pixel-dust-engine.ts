@@ -1,9 +1,11 @@
+import { repeat } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import EventManager from './event-manager';
 import ExecutionPipeline from './execution-pipeline';
 import LayerManager from './layer-manager';
 import { CanvasType } from './types';
-import CanvasGuide from './canvas-guide';
+import GuideCanvas from './guide-canvas';
+import PreviewCanvas from './preview-canvas';
 import './pixel-dust.css';
 
 type PixelDustEngineProps = {
@@ -14,7 +16,9 @@ type PixelDustEngineProps = {
 };
 
 class PixelDustEngine {
-  canvasGuide: CanvasGuide | undefined;
+  guideCanvas: GuideCanvas | undefined;
+
+  previewCanvas: PreviewCanvas | undefined;
 
   mountTarget: HTMLDivElement;
 
@@ -59,7 +63,8 @@ class PixelDustEngine {
 
     // Add canvas container to stage
     this.stage.appendChild(this.pixelDustCanvasContainer);
-    this.canvasGuide = new CanvasGuide(canvasType, dimension, this.pixelDustCanvasContainer);
+    this.guideCanvas = new GuideCanvas(canvasType, dimension, this.pixelDustCanvasContainer);
+    this.previewCanvas = new PreviewCanvas(canvasType, dimension, this.pixelDustCanvasContainer);
 
     // Add stage to mount point
     this.mountTarget.appendChild(this.stage);
@@ -88,11 +93,12 @@ class PixelDustEngine {
     // Initialize execution pipeline
     this.executionPipeline = new ExecutionPipeline({
       layerManager: this.layerManager,
-      commandGenerator: this.commandGenerator
+      commandGenerator: this.commandGenerator,
+      previewCanvas: this.previewCanvas
     });
 
     // use event manager move stream to deal with canvas move
-    this.eventManager.canvasMove$.subscribe({
+    this.eventManager.canvasMove$.pipe(repeat()).subscribe({
       next: (arg) => {
         const { x, y } = arg;
         this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-x', String(x));

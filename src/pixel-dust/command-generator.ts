@@ -96,13 +96,14 @@ class CommandGenerator {
         y: Math.floor(v * options.canvasType)
       })),
       map(({ x, y }) => {
-        if (Number.isNaN(x) && Number.isNaN(y)) {
-          return {
-            x,
-            y,
-            instrument: PreviewType.CLEANUP
-          } as PreviewCleanupCommand;
-        }
+        // if (Number.isNaN(x) && Number.isNaN(y)) {
+        //   return {
+        //     x,
+        //     y,
+        //     color: this.drawingState.foregroundColor,
+        //     instrument: PreviewType.CLEANUP
+        //   } as unknown as PreviewCleanupCommand;
+        // }
 
         switch (this.drawingState.instrument) {
           case InstrumentType.PEN:
@@ -112,6 +113,7 @@ class CommandGenerator {
               color: this.drawingState.foregroundColor,
               instrument: PreviewType.PEN
             } as PreviewPenCommand;
+
           default:
             throw new Error('Draw command not supported');
         }

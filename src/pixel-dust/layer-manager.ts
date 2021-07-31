@@ -230,7 +230,6 @@ class LayerManager {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   insertLayerAfter(arg: { destinationUuid: string; uuid: string }): void {
     const destinationLayer = this.layerStack.find((_layer) => _layer.uuid === arg.destinationUuid);
     const layer = this.layerStack.find((_layer) => _layer.uuid === arg.uuid);

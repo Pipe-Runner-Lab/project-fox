@@ -1,16 +1,20 @@
-import { map, filter, tap, debounceTime } from 'rxjs/operators';
+import { map, filter, tap, debounceTime, finalize, repeat, share } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
 import { LayerCommandType, InstrumentType, PreviewType } from './types';
 import CommandHistory from './command-history';
+import PreviewCanvas from './preview-canvas';
 
 type ExecutionPipelineProps = {
   layerManager: LayerManager;
   commandGenerator: CommandGenerator;
+  previewCanvas: PreviewCanvas;
 };
 
 class ExecutionPipeline {
   layerManager: LayerManager;
+
+  previewCanvas: PreviewCanvas;
 
   commandGenerator: CommandGenerator;
 
@@ -19,21 +23,29 @@ class ExecutionPipeline {
   constructor(options: ExecutionPipelineProps) {
     this.layerManager = options.layerManager;
     this.commandGenerator = options.commandGenerator;
+    this.previewCanvas = options.previewCanvas;
 
-    this.commandGenerator.previewCanvasCommand$.subscribe({
-      next: (command) => {
-        switch (command.instrument) {
-          case PreviewType.PEN:
-            console.log('preview pen', command.x, command.y, command.color);
-            break;
-          case PreviewType.CLEANUP:
-            console.log('preview cleanup');
-            break;
-          default:
-            break;
+    this.commandGenerator.previewCanvasCommand$
+      .pipe(
+        finalize(() => {
+          console.log('CLEANUP');
+        }),
+        repeat()
+      )
+      .subscribe({
+        next: (command) => {
+          switch (command.instrument) {
+            case PreviewType.PEN:
+              this.previewCanvas.previewLayer(command.x, command.y, command.color);
+              break;
+            case PreviewType.CLEANUP:
+              this.previewCanvas.erasePreview(command.x, command.y);
+              break;
+            default:
+              break;
+          }
         }
-      }
-    });
+      });
 
     const drawCommand$ = this.commandGenerator.canvasCommand$.pipe(
       filter(() => !!this.layerManager.activeLayer),
@@ -58,7 +70,12 @@ class ExecutionPipeline {
           default:
             break;
         }
-      })
+      }),
+      finalize(() => {
+        console.log('DRAW END');
+      }),
+      repeat(),
+      share()
     );
 
     const layerCommand$ = this.commandGenerator.layerCommand$.pipe(
