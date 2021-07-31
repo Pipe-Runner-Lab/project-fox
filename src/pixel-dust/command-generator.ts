@@ -88,7 +88,6 @@ class CommandGenerator {
         return true;
       })
     );
-
     this.previewCanvasCommand$ = options.previewStream.pipe(
       map(({ x, y }) => ({ u: x / options.dimension, v: y / options.dimension })),
       map(({ u, v }) => ({
@@ -100,8 +99,9 @@ class CommandGenerator {
           return {
             x,
             y,
+            color: this.drawingState.foregroundColor,
             instrument: PreviewType.CLEANUP
-          } as PreviewCleanupCommand;
+          } as unknown as PreviewCleanupCommand;
         }
 
         switch (this.drawingState.instrument) {
@@ -112,6 +112,7 @@ class CommandGenerator {
               color: this.drawingState.foregroundColor,
               instrument: PreviewType.PEN
             } as PreviewPenCommand;
+
           default:
             throw new Error('Draw command not supported');
         }

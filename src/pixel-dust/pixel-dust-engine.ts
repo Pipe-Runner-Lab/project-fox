@@ -4,6 +4,7 @@ import ExecutionPipeline from './execution-pipeline';
 import LayerManager from './layer-manager';
 import { CanvasType } from './types';
 import CanvasGuide from './canvas-guide';
+import PreviewCanvas from './preview-canvas';
 import './pixel-dust.css';
 
 type PixelDustEngineProps = {
@@ -15,6 +16,8 @@ type PixelDustEngineProps = {
 
 class PixelDustEngine {
   canvasGuide: CanvasGuide | undefined;
+
+  previewCanvas: PreviewCanvas | undefined;
 
   mountTarget: HTMLDivElement;
 
@@ -59,6 +62,7 @@ class PixelDustEngine {
 
     // Add canvas container to stage
     this.stage.appendChild(this.pixelDustCanvasContainer);
+    this.previewCanvas = new PreviewCanvas(canvasType, dimension, this.pixelDustCanvasContainer);
     this.canvasGuide = new CanvasGuide(canvasType, dimension, this.pixelDustCanvasContainer);
 
     // Add stage to mount point
@@ -88,7 +92,8 @@ class PixelDustEngine {
     // Initialize execution pipeline
     this.executionPipeline = new ExecutionPipeline({
       layerManager: this.layerManager,
-      commandGenerator: this.commandGenerator
+      commandGenerator: this.commandGenerator,
+      previewCanvas: this.previewCanvas
     });
 
     // use event manager move stream to deal with canvas move
