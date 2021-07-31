@@ -1,7 +1,7 @@
 import { CanvasType } from './types';
 import './pixel-dust.css';
 
-class CanvasGuide {
+class GuideCanvas {
   canvas: HTMLCanvasElement;
 
   dimension: number;
@@ -48,4 +48,4 @@ class CanvasGuide {
   }
 }
 
-export default CanvasGuide;
+export default GuideCanvas;

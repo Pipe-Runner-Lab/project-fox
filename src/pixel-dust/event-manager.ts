@@ -1,15 +1,5 @@
 import { fromEvent, Observable, concat } from 'rxjs';
-import {
-  switchMap,
-  filter,
-  takeUntil,
-  repeat,
-  tap,
-  map,
-  first,
-  takeWhile,
-  endWith
-} from 'rxjs/operators';
+import { switchMap, filter, takeUntil, tap, map, first, takeWhile } from 'rxjs/operators';
 
 type EventManagerProps = {
   canvasContainerElement: HTMLDivElement;
@@ -121,8 +111,7 @@ class EventManager {
             this.canvasMoveCache.isMoving = false;
           })
         )
-      ),
-      repeat()
+      )
     );
 
     this.canvasScale$ = wheel$.pipe(
@@ -157,17 +146,14 @@ class EventManager {
     this.canvasDraw$ = concat(mouseDown$.pipe(first()), mouseMove$).pipe(
       takeWhile(() => !this.canvasMoveCache.isMoving),
       takeUntil(mouseUp$),
-      map((event: MouseEvent) => ({ x: event.offsetX, y: event.offsetY })),
-      repeat()
+      map((event: MouseEvent) => ({ x: event.offsetX, y: event.offsetY }))
     );
 
     this.canvasPreview$ = mouseMove$.pipe(
       takeUntil(mouseLeave$),
       map((event: MouseEvent) => {
         return { x: event.offsetX, y: event.offsetY };
-      }),
-      endWith({ x: NaN, y: NaN }),
-      repeat()
+      })
     );
   }
 

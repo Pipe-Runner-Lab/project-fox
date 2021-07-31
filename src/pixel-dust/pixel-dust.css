@@ -25,11 +25,8 @@
   left: 0;
 }
 
-.canvas-guide {
-  pointer-events: none;
-  position: absolute;
-}
-
+.canvas-guide,
 .preview-canvas {
+  pointer-events: none;
   position: absolute;
 }

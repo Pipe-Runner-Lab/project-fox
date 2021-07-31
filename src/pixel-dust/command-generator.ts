@@ -88,6 +88,7 @@ class CommandGenerator {
         return true;
       })
     );
+
     this.previewCanvasCommand$ = options.previewStream.pipe(
       map(({ x, y }) => ({ u: x / options.dimension, v: y / options.dimension })),
       map(({ u, v }) => ({
@@ -95,14 +96,14 @@ class CommandGenerator {
         y: Math.floor(v * options.canvasType)
       })),
       map(({ x, y }) => {
-        if (Number.isNaN(x) && Number.isNaN(y)) {
-          return {
-            x,
-            y,
-            color: this.drawingState.foregroundColor,
-            instrument: PreviewType.CLEANUP
-          } as unknown as PreviewCleanupCommand;
-        }
+        // if (Number.isNaN(x) && Number.isNaN(y)) {
+        //   return {
+        //     x,
+        //     y,
+        //     color: this.drawingState.foregroundColor,
+        //     instrument: PreviewType.CLEANUP
+        //   } as unknown as PreviewCleanupCommand;
+        // }
 
         switch (this.drawingState.instrument) {
           case InstrumentType.PEN:

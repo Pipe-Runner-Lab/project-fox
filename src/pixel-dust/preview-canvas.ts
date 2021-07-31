@@ -50,9 +50,7 @@ class PreviewCanvas {
   }
 
   drawPreview(x: number, y: number, color: string): void {
-    // eslint-disable-next-line no-param-reassign
-    color = color.replace(/[\d.]+\)$/g, '0.4)');
-    this.ctx.fillStyle = color;
+    this.ctx.fillStyle = color.replace(/[\d.]+\)$/g, '0.4)');
     this.ctx.fillRect(
       Math.round(x * this.tileDimension),
       Math.round(y * this.tileDimension),

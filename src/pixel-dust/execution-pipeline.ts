@@ -1,4 +1,4 @@
-import { map, filter, tap, debounceTime } from 'rxjs/operators';
+import { map, filter, tap, debounceTime, finalize, repeat, share } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
 import { LayerCommandType, InstrumentType, PreviewType } from './types';
@@ -25,22 +25,27 @@ class ExecutionPipeline {
     this.commandGenerator = options.commandGenerator;
     this.previewCanvas = options.previewCanvas;
 
-    this.commandGenerator.previewCanvasCommand$.subscribe({
-      next: (command) => {
-        switch (command.instrument) {
-          case PreviewType.PEN:
-            this.previewCanvas.previewLayer(command.x, command.y, command.color);
-            console.log('preview pen', command.x, command.y, command.color);
-            break;
-          case PreviewType.CLEANUP:
-            this.previewCanvas.erasePreview(command.x, command.y);
-            console.log('preview cleanup', command.x, command.y);
-            break;
-          default:
-            break;
+    this.commandGenerator.previewCanvasCommand$
+      .pipe(
+        finalize(() => {
+          console.log('CLEANUP');
+        }),
+        repeat()
+      )
+      .subscribe({
+        next: (command) => {
+          switch (command.instrument) {
+            case PreviewType.PEN:
+              this.previewCanvas.previewLayer(command.x, command.y, command.color);
+              break;
+            case PreviewType.CLEANUP:
+              this.previewCanvas.erasePreview(command.x, command.y);
+              break;
+            default:
+              break;
+          }
         }
-      }
-    });
+      });
 
     const drawCommand$ = this.commandGenerator.canvasCommand$.pipe(
       filter(() => !!this.layerManager.activeLayer),
@@ -65,7 +70,12 @@ class ExecutionPipeline {
           default:
             break;
         }
-      })
+      }),
+      finalize(() => {
+        console.log('DRAW END');
+      }),
+      repeat(),
+      share()
     );
 
     const layerCommand$ = this.commandGenerator.layerCommand$.pipe(
