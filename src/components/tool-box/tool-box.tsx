@@ -21,7 +21,9 @@ import {
   SelectedColorContainer,
   SketchPickerContainer,
   SliderContainer,
-  InstrumentButton
+  InstrumentButton,
+  MenusContainer,
+  MenuButton
 } from './tool-box.styles';
 
 enum ActiveColorType {
@@ -87,6 +89,9 @@ function ToolBox({
 
   return (
     <>
+      <MenusContainer>
+        <MenuButton>SAVE</MenuButton>
+      </MenusContainer>
       <InstrumentBoxContainer>
         <InstrumentButton
           active={instrument === InstrumentType.PEN}

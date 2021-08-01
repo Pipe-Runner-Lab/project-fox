@@ -113,3 +113,30 @@ export const Overlay = styled.div`
   bottom: 0px;
   left: 0px;
 `;
+
+export const MenusContainer = styled.div`
+  padding: 8px;
+  margin: 8px;
+  border: 1px #e1e8eb solid;
+  border-radius: 5px;
+
+  display: grid;
+  grid-template-columns: repeat(7, 42px);
+  gap: 5px;
+`;
+
+export const MenuButton = styled.button`
+  display: block;
+
+  color: '#6b7280';
+  text-align: center;
+
+  background-color: #f3f4f6;
+  height: 28px;
+  width: 45px;
+
+  border-radius: 5px;
+  border: 0px;
+
+  cursor: pointer;
+`;

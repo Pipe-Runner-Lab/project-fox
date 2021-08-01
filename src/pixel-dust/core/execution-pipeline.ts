@@ -131,6 +131,7 @@ class ExecutionPipeline {
     drawCommand$.subscribe({
       next: () => {
         this.layerManager.updateLayerPreview();
+        this.layerManager.exportImage();
       }
     });
   }

@@ -290,6 +290,26 @@ class LayerManager {
         }))
       );
   }
+
+  exportImage(): void {
+    const imageArray = this.layerStack.map((layer) => {
+      const image = new Image();
+      image.src = layer?.imagePreview ?? '';
+      return image;
+    });
+    const finalImage = document.createElement('canvas');
+    finalImage.width = this.dimension;
+    finalImage.height = this.dimension;
+    const ctx = finalImage.getContext('2d');
+    if (ctx) {
+      for (let i = 0; i < imageArray.length; i += 1) {
+        ctx.drawImage(imageArray[i], this.dimension, this.dimension);
+      }
+      console.log(finalImage.toDataURL('img/png'));
+    } else {
+      throw Error('Context is null');
+    }
+  }
 }
 
 export default LayerManager;
