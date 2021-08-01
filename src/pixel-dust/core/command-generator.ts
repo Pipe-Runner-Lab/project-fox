@@ -12,9 +12,7 @@ import {
   ShowLayer,
   InsertLayerAfter,
   InsertLayerBefore,
-  PreviewPenCommand,
-  PreviewCleanupCommand,
-  PreviewType
+  CanvasCommands
 } from '../types/types';
 
 type CommandGeneratorProps = {
@@ -27,9 +25,9 @@ type CommandGeneratorProps = {
   canvasType: CanvasType;
 };
 class CommandGenerator {
-  canvasCommand$: Observable<PenCommand | EraserCommand>;
+  canvasCommand$: Observable<CanvasCommands>;
 
-  previewCanvasCommand$: Observable<PreviewPenCommand | PreviewCleanupCommand>;
+  previewCanvasCommand$: Observable<CanvasCommands>;
 
   layerCommand$ = new Subject<
     | AddLayerAfter
@@ -42,8 +40,8 @@ class CommandGenerator {
   >();
 
   drawingState = {
-    foregroundColor: 'black',
-    backgroundColor: 'white',
+    foregroundColor: 'rgb(0, 0, 0, 1)',
+    backgroundColor: 'rgb(255, 255, 255, 1)',
     instrument: InstrumentType.PEN
   };
 
@@ -96,26 +94,22 @@ class CommandGenerator {
         y: Math.floor(v * options.canvasType)
       })),
       map(({ x, y }) => {
-        // if (Number.isNaN(x) && Number.isNaN(y)) {
-        //   return {
-        //     x,
-        //     y,
-        //     color: this.drawingState.foregroundColor,
-        //     instrument: PreviewType.CLEANUP
-        //   } as unknown as PreviewCleanupCommand;
-        // }
-
         switch (this.drawingState.instrument) {
           case InstrumentType.PEN:
             return {
               x,
               y,
               color: this.drawingState.foregroundColor,
-              instrument: PreviewType.PEN
-            } as PreviewPenCommand;
-
+              instrument: InstrumentType.PEN
+            } as PenCommand;
+          case InstrumentType.ERASER:
+            return {
+              x,
+              y,
+              instrument: InstrumentType.ERASER
+            } as EraserCommand;
           default:
-            throw new Error('Draw command not supported');
+            throw new Error('Preview command not supported');
         }
       }),
       distinctUntilChanged((prev, curr) => {
@@ -123,8 +117,8 @@ class CommandGenerator {
           if (prev.x !== curr.x || prev.y !== curr.y || prev.instrument !== curr.instrument) {
             return false;
           }
-          if ((prev as PreviewPenCommand).color && (curr as PreviewPenCommand).color) {
-            if ((prev as PreviewPenCommand).color !== (curr as PreviewPenCommand).color) {
+          if ((prev as PenCommand).color && (curr as PenCommand).color) {
+            if ((prev as PenCommand).color !== (curr as PenCommand).color) {
               return false;
             }
             return true;

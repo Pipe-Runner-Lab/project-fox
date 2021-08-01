@@ -3,7 +3,9 @@
 export enum CanvasType {
   X50 = 50,
   X64 = 64,
-  X100 = 100
+  X100 = 100,
+  X200 = 200,
+  X500 = 500
 }
 
 /** Layer Manager types */
@@ -83,11 +85,6 @@ export enum InstrumentType {
   COLOR_PICKER = 'COLOR_PICKER'
 }
 
-export enum PreviewType {
-  PEN = 'PEN',
-  CLEANUP = 'CLEANUP'
-}
-
 type BaseCommand = {
   x: number;
   y: number;
@@ -102,20 +99,27 @@ export type EraserCommand = BaseCommand & {
   instrument: InstrumentType.ERASER;
 };
 
-export type PreviewPenCommand = BaseCommand & {
-  instrument: PreviewType.PEN;
-  color: string;
-};
-
-export type PreviewCleanupCommand = BaseCommand & {
-  instrument: PreviewType.CLEANUP;
-};
+export type CanvasCommands = PenCommand | EraserCommand;
 
 /** Command History types */
-export type ExtendedPenCommand = PenCommand & {
+export type HistoryPenCommand = {
+  instrument: InstrumentType.PEN;
+  color: string;
   activeLayerUuid: string;
+  cartesianArray: { x: number; y: number }[];
 };
 
-export type ExtendedEraseCommand = EraserCommand & {
+export type HistoryEraseCommand = {
+  instrument: InstrumentType.ERASER;
   activeLayerUuid: string;
+  cartesianArray: { x: number; y: number }[];
+};
+
+// export type HistoryCommands = HistoryPenCommand | HistoryEraseCommand;
+
+export type HistoryCommands = {
+  instrument: InstrumentType.PEN | InstrumentType.ERASER;
+  color: string | undefined;
+  activeLayerUuid: string;
+  cartesianArray: { x: number; y: number }[];
 };

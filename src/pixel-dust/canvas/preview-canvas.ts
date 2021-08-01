@@ -1,4 +1,4 @@
-import { CanvasType } from '../types/types';
+import { CanvasCommands, CanvasType, InstrumentType } from '../types/types';
 
 class PreviewCanvas {
   canvas: HTMLCanvasElement;
@@ -9,17 +9,13 @@ class PreviewCanvas {
 
   tileDimension: number;
 
-  previousX: number;
-
-  previousY: number;
-
   canvasType: CanvasType;
+
+  lastCommand: CanvasCommands | null = null;
 
   constructor(canvasType: CanvasType, dimension: number, mountTarget: HTMLDivElement) {
     this.dimension = dimension;
     this.canvasType = canvasType;
-    this.previousX = -1;
-    this.previousY = -1;
     this.tileDimension = dimension / canvasType;
     this.canvas = document.createElement('canvas');
     this.canvas.classList.add('preview-canvas');
@@ -35,39 +31,37 @@ class PreviewCanvas {
     }
   }
 
-  previewLayer(x: number, y: number, color: string): void {
-    if (this.previousX === -1 || this.previousY === -1) {
-      this.drawPreview(x, y, color);
-      this.previousX = x;
-      this.previousY = y;
-    } else {
-      this.erasePreview(this.previousX, this.previousY);
-      this.drawPreview(x, y, color);
-      this.previousX = x;
-      this.previousY = y;
+  preview(command: CanvasCommands): void {
+    this.refresh();
+    this.lastCommand = command;
+
+    switch (command.instrument) {
+      case InstrumentType.PEN:
+        this.ctx.fillStyle = command.color.replace(/[\d.]+\)$/g, '0.4)');
+        this.ctx.fillRect(
+          Math.round(command.x * this.tileDimension),
+          Math.round(command.y * this.tileDimension),
+          this.tileDimension,
+          this.tileDimension
+        );
+        break;
+      default:
+        break;
     }
   }
 
-  drawPreview(x: number, y: number, color: string): void {
-    this.ctx.fillStyle = color.replace(/[\d.]+\)$/g, '0.4)');
-    this.ctx.fillRect(
-      Math.round(x * this.tileDimension),
-      Math.round(y * this.tileDimension),
-      this.tileDimension,
-      this.tileDimension
-    );
-  }
-
-  erasePreview(x: number, y: number): void {
-    if (Number.isNaN(x) || Number.isNaN(y)) {
-      this.erasePreview(this.previousX, this.previousY);
-    } else {
-      this.ctx.clearRect(
-        Math.round(x * this.tileDimension),
-        Math.round(y * this.tileDimension),
-        this.tileDimension,
-        this.tileDimension
-      );
+  refresh(): void {
+    switch (this.lastCommand?.instrument) {
+      case InstrumentType.PEN:
+        this.ctx.clearRect(
+          Math.round(this.lastCommand.x * this.tileDimension),
+          Math.round(this.lastCommand.y * this.tileDimension),
+          this.tileDimension,
+          this.tileDimension
+        );
+        break;
+      default:
+        break;
     }
   }
 }

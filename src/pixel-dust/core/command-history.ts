@@ -3,16 +3,15 @@ import {
   ExtendedAddLayerAfter,
   ExtendedAddLayerBefore,
   DeleteLayer,
-  ExtendedPenCommand,
-  ExtendedEraseCommand,
   HideLayer,
   ShowLayer,
   InsertLayerAfter,
-  InsertLayerBefore
+  InsertLayerBefore,
+  HistoryCommands
 } from '../types/types';
 
 type CommandHistoryProps = {
-  drawCommand$: Observable<ExtendedPenCommand | ExtendedEraseCommand>;
+  drawCommand$: Observable<HistoryCommands>;
   layerCommand$: Observable<
     | ExtendedAddLayerAfter
     | ExtendedAddLayerBefore
@@ -25,8 +24,7 @@ type CommandHistoryProps = {
 };
 
 type Command =
-  | ExtendedPenCommand
-  | ExtendedEraseCommand
+  | HistoryCommands
   | ExtendedAddLayerAfter
   | ExtendedAddLayerBefore
   | DeleteLayer
@@ -41,7 +39,7 @@ class CommandHistory {
   constructor({ drawCommand$, layerCommand$ }: CommandHistoryProps) {
     merge(drawCommand$, layerCommand$).subscribe({
       next: (command) => {
-        // console.log(command);
+        console.log(command);
         this.redoStack.push(command);
       }
     });

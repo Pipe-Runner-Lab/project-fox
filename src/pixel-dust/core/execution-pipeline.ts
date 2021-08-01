@@ -1,7 +1,7 @@
-import { map, filter, tap, debounceTime, finalize, repeat, share } from 'rxjs/operators';
+import { map, filter, tap, finalize, repeat, share, reduce } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
-import { LayerCommandType, InstrumentType, PreviewType } from '../types/types';
+import { HistoryCommands, InstrumentType, LayerCommandType } from '../types/types';
 import CommandHistory from './command-history';
 import PreviewCanvas from '../canvas/preview-canvas';
 
@@ -28,22 +28,13 @@ class ExecutionPipeline {
     this.commandGenerator.previewCanvasCommand$
       .pipe(
         finalize(() => {
-          console.log('CLEANUP');
+          this.previewCanvas.refresh();
         }),
         repeat()
       )
       .subscribe({
         next: (command) => {
-          switch (command.instrument) {
-            case PreviewType.PEN:
-              this.previewCanvas.previewLayer(command.x, command.y, command.color);
-              break;
-            case PreviewType.CLEANUP:
-              this.previewCanvas.erasePreview(command.x, command.y);
-              break;
-            default:
-              break;
-          }
+          this.previewCanvas.preview(command);
         }
       });
 
@@ -60,20 +51,26 @@ class ExecutionPipeline {
         };
       }),
       tap((command) => {
-        switch (command.instrument) {
-          case InstrumentType.PEN:
-            this.layerManager.activeLayer?.pixelCanvas.draw(command.x, command.y, command.color);
-            break;
-          case InstrumentType.ERASER:
-            this.layerManager.activeLayer?.pixelCanvas.erase(command.x, command.y);
-            break;
-          default:
-            break;
+        this.layerManager.activeLayer?.pixelCanvas.execute(command);
+      }),
+      reduce(
+        (acc: HistoryCommands, command) => {
+          if (command.instrument === InstrumentType.PEN) {
+            acc.color = command.color;
+          }
+
+          acc.instrument = command.instrument;
+          acc.activeLayerUuid = command.activeLayerUuid;
+          acc.cartesianArray.push({ x: command.x, y: command.y });
+          return acc;
+        },
+        {
+          instrument: InstrumentType.PEN,
+          color: undefined,
+          activeLayerUuid: '',
+          cartesianArray: []
         }
-      }),
-      finalize(() => {
-        console.log('DRAW END');
-      }),
+      ),
       repeat(),
       share()
     );
@@ -131,7 +128,7 @@ class ExecutionPipeline {
       layerCommand$
     });
 
-    drawCommand$.pipe(debounceTime(500)).subscribe({
+    drawCommand$.subscribe({
       next: () => {
         this.layerManager.updateLayerPreview();
       }

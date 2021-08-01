@@ -1,4 +1,4 @@
-import { CanvasType } from '../types/types';
+import { CanvasCommands, CanvasType, InstrumentType } from '../types/types';
 
 class PixelCanvas {
   canvas: HTMLCanvasElement;
@@ -29,23 +29,28 @@ class PixelCanvas {
     }
   }
 
-  draw(x: number, y: number, color: string): void {
-    this.ctx.fillStyle = color;
-    this.ctx.fillRect(
-      Math.round(x * this.tileDimension),
-      Math.round(y * this.tileDimension),
-      this.tileDimension,
-      this.tileDimension
-    );
-  }
-
-  erase(x: number, y: number): void {
-    this.ctx.clearRect(
-      Math.round(x * this.tileDimension),
-      Math.round(y * this.tileDimension),
-      this.tileDimension,
-      this.tileDimension
-    );
+  execute(command: CanvasCommands): void {
+    switch (command.instrument) {
+      case InstrumentType.PEN:
+        this.ctx.fillStyle = command.color;
+        this.ctx.fillRect(
+          Math.round(command.x * this.tileDimension),
+          Math.round(command.y * this.tileDimension),
+          this.tileDimension,
+          this.tileDimension
+        );
+        break;
+      case InstrumentType.ERASER:
+        this.ctx.clearRect(
+          Math.round(command.x * this.tileDimension),
+          Math.round(command.y * this.tileDimension),
+          this.tileDimension,
+          this.tileDimension
+        );
+        break;
+      default:
+        break;
+    }
   }
 
   getCanvasBlob(type?: string, quality?: number): Promise<Blob | null> {
