@@ -1,7 +1,7 @@
 import React from 'react';
-import PixelDustApi, { LayerMetaData, InstrumentType } from './pixel-dust-api';
+import PixelDustApi, { LayerMetaData, InstrumentType } from '../core/pixel-dust-api';
 
-type PixelDustBoardProps = {
+type PixelDustReactProps = {
   foregroundColor: string;
   backgroundColor: string;
   instrument: InstrumentType;
@@ -9,12 +9,12 @@ type PixelDustBoardProps = {
   onActiveLayerChange: (layer: LayerMetaData | null) => void;
 };
 
-type PixelDustBoardState = Record<string, undefined>;
+type PixelDustReactState = Record<string, undefined>;
 
-class PixelDustBoard extends React.Component<PixelDustBoardProps, PixelDustBoardState> {
+class PixelDustReact extends React.Component<PixelDustReactProps, PixelDustReactState> {
   pixelDustApi: PixelDustApi | undefined;
 
-  constructor(props: PixelDustBoardProps) {
+  constructor(props: PixelDustReactProps) {
     super(props);
     this.state = {};
   }
@@ -34,7 +34,7 @@ class PixelDustBoard extends React.Component<PixelDustBoardProps, PixelDustBoard
     }
   }
 
-  shouldComponentUpdate(nextProps: PixelDustBoardProps): boolean {
+  shouldComponentUpdate(nextProps: PixelDustReactProps): boolean {
     const { foregroundColor, backgroundColor, instrument } = this.props;
     if (foregroundColor !== nextProps.foregroundColor) {
       this.pixelDustApi?.setForegroundColor(nextProps.foregroundColor);
@@ -65,4 +65,4 @@ class PixelDustBoard extends React.Component<PixelDustBoardProps, PixelDustBoard
   }
 }
 
-export default PixelDustBoard;
+export default PixelDustReact;

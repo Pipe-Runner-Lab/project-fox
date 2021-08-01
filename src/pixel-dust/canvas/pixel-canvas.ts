@@ -1,4 +1,4 @@
-import { CanvasType } from './types';
+import { CanvasType } from '../types/types';
 
 class PixelCanvas {
   canvas: HTMLCanvasElement;

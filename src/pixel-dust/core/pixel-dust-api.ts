@@ -1,5 +1,5 @@
 import PixelDustEngine from './pixel-dust-engine';
-import { LayerMetaData, LayerCommandType, CanvasType, InstrumentType } from './types';
+import { LayerMetaData, LayerCommandType, CanvasType, InstrumentType } from '../types/types';
 
 type PixelDustApiProps = {
   mountTarget: HTMLDivElement;

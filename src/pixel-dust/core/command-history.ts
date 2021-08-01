@@ -9,7 +9,7 @@ import {
   ShowLayer,
   InsertLayerAfter,
   InsertLayerBefore
-} from './types';
+} from '../types/types';
 
 type CommandHistoryProps = {
   drawCommand$: Observable<ExtendedPenCommand | ExtendedEraseCommand>;

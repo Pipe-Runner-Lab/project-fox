@@ -3,10 +3,10 @@ import CommandGenerator from './command-generator';
 import EventManager from './event-manager';
 import ExecutionPipeline from './execution-pipeline';
 import LayerManager from './layer-manager';
-import { CanvasType } from './types';
-import GuideCanvas from './guide-canvas';
-import PreviewCanvas from './preview-canvas';
-import './pixel-dust.css';
+import { CanvasType } from '../types/types';
+import GuideCanvas from '../canvas/guide-canvas';
+import PreviewCanvas from '../canvas/preview-canvas';
+import '../styles/pixel-dust.css';
 
 type PixelDustEngineProps = {
   mountTarget: HTMLDivElement;

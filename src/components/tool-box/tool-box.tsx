@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { CirclePicker, SliderPicker, SketchPicker, ColorResult } from 'react-color';
-import { InstrumentType } from 'pixel-dust/pixel-dust-api';
+import { InstrumentType } from 'pixel-dust/core/pixel-dust-api';
 import {
   RiPencilFill as PenIcon,
   RiPaintFill as BucketIcon,

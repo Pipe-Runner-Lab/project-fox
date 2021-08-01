@@ -1,8 +1,8 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { PixelDustBoard } from 'pixel-dust';
+import { PixelDustReact } from 'pixel-dust';
 import ToolBox from 'components/tool-box';
 import LayerBox from 'components/layer-box';
-import { InstrumentType, LayerMetaData } from 'pixel-dust/pixel-dust-api';
+import { InstrumentType, LayerMetaData } from 'pixel-dust/core/pixel-dust-api';
 import { useParams } from 'react-router';
 import {
   DrawingBoardContainer,
@@ -15,7 +15,7 @@ function DrawingBoard(): JSX.Element {
   const { id } = useParams();
   console.log('Project ID: ', id);
 
-  const pixelDustBoardRef = useRef<PixelDustBoard>(null);
+  const pixelDustReactRef = useRef<PixelDustReact>(null);
 
   const [activeInstrument, setActiveInstrument] = useState<InstrumentType>(InstrumentType.PEN);
   const [activeForegroundRGBA, setActiveForegroundRGBA] = useState<string>('#000000');
@@ -33,58 +33,58 @@ function DrawingBoard(): JSX.Element {
 
   const addLayerAfterOnEngine = useCallback(
     (arg?: { uuid?: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.addLayerAfter(arg);
+      pixelDustReactRef.current?.pixelDustApi?.addLayerAfter(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   const addLayerBeforeOnEngine = useCallback(
     (arg: { uuid: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.addLayerBefore(arg);
+      pixelDustReactRef.current?.pixelDustApi?.addLayerBefore(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   const setActiveLayerOnEngine = useCallback(
     (arg: { uuid: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.setActiveLayer(arg);
+      pixelDustReactRef.current?.pixelDustApi?.setActiveLayer(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   const deleteLayerOnEngine = useCallback(
     (arg: { uuid: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.deleteLayer(arg);
+      pixelDustReactRef.current?.pixelDustApi?.deleteLayer(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   const hideLayerOnEngine = useCallback(
     (arg: { uuid: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.hideLayer(arg);
+      pixelDustReactRef.current?.pixelDustApi?.hideLayer(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   const showLayerOnEngine = useCallback(
     (arg: { uuid: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.showLayer(arg);
+      pixelDustReactRef.current?.pixelDustApi?.showLayer(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   const insertLayerAfterOnEngine = useCallback(
     (arg: { uuid: string; destinationUuid: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.insertLayerAfter(arg);
+      pixelDustReactRef.current?.pixelDustApi?.insertLayerAfter(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   const insertLayerBeforeOnEngine = useCallback(
     (arg: { uuid: string; destinationUuid: string }): void => {
-      pixelDustBoardRef.current?.pixelDustApi?.insertLayerBefore(arg);
+      pixelDustReactRef.current?.pixelDustApi?.insertLayerBefore(arg);
     },
-    [pixelDustBoardRef]
+    [pixelDustReactRef]
   );
 
   return (
@@ -98,8 +98,8 @@ function DrawingBoard(): JSX.Element {
         />
       </ToolBoxWrapper>
       <CanvasWrapper>
-        <PixelDustBoard
-          ref={pixelDustBoardRef}
+        <PixelDustReact
+          ref={pixelDustReactRef}
           instrument={activeInstrument}
           foregroundColor={activeForegroundRGBA}
           backgroundColor={activeBackgroundRGBA}

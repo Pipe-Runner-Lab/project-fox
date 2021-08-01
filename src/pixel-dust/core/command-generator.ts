@@ -15,7 +15,7 @@ import {
   PreviewPenCommand,
   PreviewCleanupCommand,
   PreviewType
-} from './types';
+} from '../types/types';
 
 type CommandGeneratorProps = {
   drawStream: Observable<{

@@ -1,3 +1,3 @@
-import PixelDustBoard from './pixel-dust-board';
+import PixelDustReact from './bindings/pixel-dust-react';
 
-export { PixelDustBoard };
+export { PixelDustReact };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayerMetaData } from 'pixel-dust/pixel-dust-api';
+import { LayerMetaData } from 'pixel-dust/core/pixel-dust-api';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { VscAdd as AddLayerIcon, VscRemove as DeleteLayerIcon } from 'react-icons/vsc';
 import { BiUpArrow as UpwardArrowIcon, BiDownArrow as DownwardArrowIcon } from 'react-icons/bi';

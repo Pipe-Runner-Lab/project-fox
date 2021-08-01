@@ -1,5 +1,4 @@
-/* eslint-disable use-isnan */
-import { CanvasType } from './types';
+import { CanvasType } from '../types/types';
 
 class PreviewCanvas {
   canvas: HTMLCanvasElement;

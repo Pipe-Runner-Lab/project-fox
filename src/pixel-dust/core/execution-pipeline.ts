@@ -1,9 +1,9 @@
 import { map, filter, tap, debounceTime, finalize, repeat, share } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
-import { LayerCommandType, InstrumentType, PreviewType } from './types';
+import { LayerCommandType, InstrumentType, PreviewType } from '../types/types';
 import CommandHistory from './command-history';
-import PreviewCanvas from './preview-canvas';
+import PreviewCanvas from '../canvas/preview-canvas';
 
 type ExecutionPipelineProps = {
   layerManager: LayerManager;

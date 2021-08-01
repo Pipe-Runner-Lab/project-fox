@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import PixelCanvas from './pixel-canvas';
-import { LayerMetaData, CanvasType } from './types';
+import PixelCanvas from '../canvas/pixel-canvas';
+import { LayerMetaData, CanvasType } from '../types/types';
 
 export type Layer = {
   pixelCanvas: PixelCanvas;

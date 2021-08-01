@@ -1,5 +1,4 @@
-import { CanvasType } from './types';
-import './pixel-dust.css';
+import { CanvasType } from '../types/types';
 
 class GuideCanvas {
   canvas: HTMLCanvasElement;
