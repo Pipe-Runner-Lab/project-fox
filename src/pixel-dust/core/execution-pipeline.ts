@@ -1,5 +1,15 @@
 import { Subscription } from 'rxjs';
-import { map, filter, tap, finalize, repeat, share, reduce } from 'rxjs/operators';
+import {
+  map,
+  filter,
+  tap,
+  finalize,
+  repeat,
+  share,
+  reduce,
+  groupBy,
+  switchMap
+} from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
 import { HistoryCanvasCommands, InstrumentType } from '../types/types';
@@ -58,23 +68,28 @@ class ExecutionPipeline {
       tap((command) => {
         this.layerManager.activeLayer?.pixelCanvas.execute(command);
       }),
-      reduce(
-        (acc: HistoryCanvasCommands, command) => {
-          if (command.instrument === InstrumentType.PEN) {
-            acc.color = command.color;
-          }
+      groupBy((command) => command.instrument),
+      switchMap((command$) =>
+        command$.pipe(
+          reduce(
+            (acc: HistoryCanvasCommands, command) => {
+              if (command.instrument === InstrumentType.PEN) {
+                acc.color = command.color;
+              }
 
-          acc.instrument = command.instrument;
-          acc.activeLayerUuid = command.activeLayerUuid;
-          acc.cartesianArray.push({ x: command.x, y: command.y });
-          return acc;
-        },
-        {
-          instrument: InstrumentType.PEN,
-          color: undefined,
-          activeLayerUuid: '',
-          cartesianArray: []
-        }
+              acc.instrument = command.instrument;
+              acc.activeLayerUuid = command.activeLayerUuid;
+              acc.cartesianArray.push({ x: command.x, y: command.y });
+              return acc;
+            },
+            {
+              instrument: InstrumentType.PEN,
+              color: undefined,
+              activeLayerUuid: '',
+              cartesianArray: []
+            }
+          )
+        )
       ),
       repeat(),
       share()
