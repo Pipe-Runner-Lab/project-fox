@@ -113,3 +113,66 @@ export const Overlay = styled.div`
   bottom: 0px;
   left: 0px;
 `;
+
+export const InteractionContainer = styled.div`
+  padding: 8px;
+  margin: 8px;
+  border: 1px #e1e8eb solid;
+  border-radius: 5px;
+
+  & > * + * {
+    margin-top: 8px;
+  }
+`;
+
+export const NameContainer = styled.div`
+  width: 100%;
+
+  & > input {
+    width: 100%;
+    height: 34px;
+    border-radius: 5px;
+    outline: white none 0px;
+    padding: 8px;
+    border: 1px #a7bbc7 solid;
+    font-size: 14px;
+
+    &::placeholder {
+      color: #adb5ba;
+    }
+  }
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+
+  & > * + * {
+    margin-left: 8px;
+  }
+`;
+
+export const TextButton = styled.button`
+  display: block;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border: 1px #d1d5db solid;
+
+  & > svg {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background-color: #e5e7eb;
+  }
+
+  & > * + * {
+    margin-left: 4px;
+  }
+`;

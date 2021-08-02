@@ -1,53 +1,33 @@
-import { Observable, merge } from 'rxjs';
-import {
-  ExtendedAddLayerAfter,
-  ExtendedAddLayerBefore,
-  DeleteLayer,
-  HideLayer,
-  ShowLayer,
-  InsertLayerAfter,
-  InsertLayerBefore,
-  HistoryCommands
-} from '../types/types';
+import { Observable, merge, Subscription } from 'rxjs';
+import { HistoryCanvasCommands, HistoryLayerCommands } from '../types/types';
 
 type CommandHistoryProps = {
-  drawCommand$: Observable<HistoryCommands>;
-  layerCommand$: Observable<
-    | ExtendedAddLayerAfter
-    | ExtendedAddLayerBefore
-    | DeleteLayer
-    | HideLayer
-    | ShowLayer
-    | InsertLayerAfter
-    | InsertLayerBefore
-  >;
+  drawCommand$: Observable<HistoryCanvasCommands>;
+  layerCommand$: Observable<HistoryLayerCommands>;
 };
 
-type Command =
-  | HistoryCommands
-  | ExtendedAddLayerAfter
-  | ExtendedAddLayerBefore
-  | DeleteLayer
-  | HideLayer
-  | ShowLayer
-  | InsertLayerAfter
-  | InsertLayerBefore;
+type Command = HistoryCanvasCommands | HistoryLayerCommands;
 
 class CommandHistory {
   redoStack: Command[] = [];
 
+  subscriptions: Subscription[] = [];
+
   constructor({ drawCommand$, layerCommand$ }: CommandHistoryProps) {
-    merge(drawCommand$, layerCommand$).subscribe({
-      next: (command) => {
-        console.log(command);
-        this.redoStack.push(command);
-      }
-    });
+    this.subscriptions.push(
+      merge(drawCommand$, layerCommand$).subscribe({
+        next: (command) => {
+          console.log(command);
+          this.redoStack.push(command);
+        }
+      })
+    );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   cleanUp(): void {
-    console.info('clean up for command history called');
+    this.subscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
   }
 }
 

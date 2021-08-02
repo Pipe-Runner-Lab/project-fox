@@ -3,13 +3,13 @@ import { CirclePicker, SliderPicker, SketchPicker, ColorResult } from 'react-col
 import { InstrumentType } from 'pixel-dust/core/pixel-dust-api';
 import {
   RiPencilFill as PenIcon,
-  RiPaintFill as BucketIcon,
+  RiPaintFill as FillIcon,
   RiEraserFill as EraserIcon,
   RiGridFill as PixelSquareIcon,
   RiFocusFill as PixelCircleIcon,
-  RiShape2Fill as PixelFrameIcon,
   RiSipFill as ColorPickerIcon,
-  RiQuillPenFill as RandomWidthPenIcon
+  RiDownload2Line as ExportIcon,
+  RiSave2Fill as SaveIcon
 } from 'react-icons/ri';
 import {
   ActiveBackgroundColor,
@@ -21,7 +21,11 @@ import {
   SelectedColorContainer,
   SketchPickerContainer,
   SliderContainer,
-  InstrumentButton
+  InstrumentButton,
+  InteractionContainer,
+  NameContainer,
+  ButtonContainer,
+  TextButton
 } from './tool-box.styles';
 
 enum ActiveColorType {
@@ -87,6 +91,21 @@ function ToolBox({
 
   return (
     <>
+      <InteractionContainer>
+        <NameContainer>
+          <input value="" placeholder="Name your art work..." />
+        </NameContainer>
+        <ButtonContainer>
+          <TextButton>
+            <ExportIcon />
+            <span>Export</span>
+          </TextButton>
+          <TextButton>
+            <SaveIcon />
+            <span>Save</span>
+          </TextButton>
+        </ButtonContainer>
+      </InteractionContainer>
       <InstrumentBoxContainer>
         <InstrumentButton
           active={instrument === InstrumentType.PEN}
@@ -94,19 +113,14 @@ function ToolBox({
           <PenIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={instrument === InstrumentType.RANDOM_WIDTH_PEN}
-          onClick={() => onChangeInstrument(InstrumentType.RANDOM_WIDTH_PEN)}>
-          <RandomWidthPenIcon />
-        </InstrumentButton>
-        <InstrumentButton
           active={instrument === InstrumentType.ERASER}
           onClick={() => onChangeInstrument(InstrumentType.ERASER)}>
           <EraserIcon />
         </InstrumentButton>
         <InstrumentButton
-          active={instrument === InstrumentType.BUCKET}
-          onClick={() => onChangeInstrument(InstrumentType.BUCKET)}>
-          <BucketIcon />
+          active={instrument === InstrumentType.FILL}
+          onClick={() => onChangeInstrument(InstrumentType.FILL)}>
+          <FillIcon />
         </InstrumentButton>
         <InstrumentButton
           active={instrument === InstrumentType.PIXEL_SQUARE}
@@ -117,11 +131,6 @@ function ToolBox({
           active={instrument === InstrumentType.PIXEL_CIRCLE}
           onClick={() => onChangeInstrument(InstrumentType.PIXEL_CIRCLE)}>
           <PixelCircleIcon />
-        </InstrumentButton>
-        <InstrumentButton
-          active={instrument === InstrumentType.PIXEL_FRAME}
-          onClick={() => onChangeInstrument(InstrumentType.PIXEL_FRAME)}>
-          <PixelFrameIcon />
         </InstrumentButton>
         <InstrumentButton
           active={instrument === InstrumentType.COLOR_PICKER}

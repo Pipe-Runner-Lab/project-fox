@@ -64,6 +64,15 @@ export type InsertLayerAfter = {
   destinationUuid: string;
 };
 
+export type LayerCommands =
+  | AddLayerAfter
+  | AddLayerBefore
+  | DeleteLayer
+  | HideLayer
+  | ShowLayer
+  | InsertLayerBefore
+  | InsertLayerAfter;
+
 export type ExtendedAddLayerAfter = AddLayerAfter & {
   generatedUuid: string;
 };
@@ -72,16 +81,23 @@ export type ExtendedAddLayerBefore = AddLayerBefore & {
   generatedUuid: string;
 };
 
+export type HistoryLayerCommands =
+  | ExtendedAddLayerAfter
+  | ExtendedAddLayerBefore
+  | DeleteLayer
+  | HideLayer
+  | ShowLayer
+  | InsertLayerBefore
+  | InsertLayerAfter;
+
 /** Command Generator types */
 
 export enum InstrumentType {
   PEN = 'PEN',
-  RANDOM_WIDTH_PEN = 'RANDOM_WIDTH_PEN',
-  BUCKET = 'BUCKET',
+  FILL = 'FILL',
   ERASER = 'ERASER',
   PIXEL_SQUARE = 'PIXEL_SQUARE',
   PIXEL_CIRCLE = 'PIXEL_CIRCLE',
-  PIXEL_FRAME = 'PIXEL_FRAME',
   COLOR_PICKER = 'COLOR_PICKER'
 }
 
@@ -93,10 +109,12 @@ type BaseCommand = {
 export type PenCommand = BaseCommand & {
   instrument: InstrumentType.PEN;
   color: string;
+  size?: number;
 };
 
 export type EraserCommand = BaseCommand & {
   instrument: InstrumentType.ERASER;
+  size?: number;
 };
 
 export type CanvasCommands = PenCommand | EraserCommand;
@@ -117,7 +135,7 @@ export type HistoryEraseCommand = {
 
 // export type HistoryCommands = HistoryPenCommand | HistoryEraseCommand;
 
-export type HistoryCommands = {
+export type HistoryCanvasCommands = {
   instrument: InstrumentType.PEN | InstrumentType.ERASER;
   color: string | undefined;
   activeLayerUuid: string;

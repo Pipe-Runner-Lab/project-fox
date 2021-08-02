@@ -45,6 +45,15 @@ class PreviewCanvas {
           this.tileDimension
         );
         break;
+      case InstrumentType.ERASER:
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(
+          Math.round(command.x * this.tileDimension),
+          Math.round(command.y * this.tileDimension),
+          this.tileDimension,
+          this.tileDimension
+        );
+        break;
       default:
         break;
     }
@@ -53,6 +62,14 @@ class PreviewCanvas {
   refresh(): void {
     switch (this.lastCommand?.instrument) {
       case InstrumentType.PEN:
+        this.ctx.clearRect(
+          Math.round(this.lastCommand.x * this.tileDimension),
+          Math.round(this.lastCommand.y * this.tileDimension),
+          this.tileDimension,
+          this.tileDimension
+        );
+        break;
+      case InstrumentType.ERASER:
         this.ctx.clearRect(
           Math.round(this.lastCommand.x * this.tileDimension),
           Math.round(this.lastCommand.y * this.tileDimension),

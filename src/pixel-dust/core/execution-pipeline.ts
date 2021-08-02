@@ -1,7 +1,8 @@
+import { Subscription } from 'rxjs';
 import { map, filter, tap, finalize, repeat, share, reduce } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import LayerManager from './layer-manager';
-import { HistoryCommands, InstrumentType, LayerCommandType } from '../types/types';
+import { HistoryCanvasCommands, InstrumentType } from '../types/types';
 import CommandHistory from './command-history';
 import PreviewCanvas from '../canvas/preview-canvas';
 
@@ -20,23 +21,27 @@ class ExecutionPipeline {
 
   commandHistory: CommandHistory;
 
+  subscriptions: Subscription[] = [];
+
   constructor(options: ExecutionPipelineProps) {
     this.layerManager = options.layerManager;
     this.commandGenerator = options.commandGenerator;
     this.previewCanvas = options.previewCanvas;
 
-    this.commandGenerator.previewCanvasCommand$
-      .pipe(
-        finalize(() => {
-          this.previewCanvas.refresh();
-        }),
-        repeat()
-      )
-      .subscribe({
-        next: (command) => {
-          this.previewCanvas.preview(command);
-        }
-      });
+    this.subscriptions.push(
+      this.commandGenerator.previewCanvasCommand$
+        .pipe(
+          finalize(() => {
+            this.previewCanvas.refresh();
+          }),
+          repeat()
+        )
+        .subscribe({
+          next: (command) => {
+            this.previewCanvas.preview(command);
+          }
+        })
+    );
 
     const drawCommand$ = this.commandGenerator.canvasCommand$.pipe(
       filter(() => !!this.layerManager.activeLayer),
@@ -54,7 +59,7 @@ class ExecutionPipeline {
         this.layerManager.activeLayer?.pixelCanvas.execute(command);
       }),
       reduce(
-        (acc: HistoryCommands, command) => {
+        (acc: HistoryCanvasCommands, command) => {
           if (command.instrument === InstrumentType.PEN) {
             acc.color = command.color;
           }
@@ -76,51 +81,7 @@ class ExecutionPipeline {
     );
 
     const layerCommand$ = this.commandGenerator.layerCommand$.pipe(
-      map((command) => {
-        switch (command.type) {
-          case LayerCommandType.ADD_AFTER: {
-            const { uuid: generatedUuid } = this.layerManager.addLayerAfter({
-              uuid: command.uuid
-            });
-            return { ...command, generatedUuid };
-          }
-          case LayerCommandType.ADD_BEFORE: {
-            console.log(command);
-            const { uuid: generatedUuid } = this.layerManager.addLayerBefore({
-              uuid: command.uuid
-            });
-            return { ...command, generatedUuid };
-          }
-          case LayerCommandType.DELETE: {
-            this.layerManager.deleteLayer({ uuid: command.uuid });
-            return command;
-          }
-          case LayerCommandType.HIDE: {
-            this.layerManager.hideLayer({ uuid: command.uuid });
-            return command;
-          }
-          case LayerCommandType.SHOW: {
-            this.layerManager.showLayer({ uuid: command.uuid });
-            return command;
-          }
-          case LayerCommandType.INSERT_AFTER: {
-            this.layerManager.insertLayerAfter({
-              uuid: command.uuid,
-              destinationUuid: command.destinationUuid
-            });
-            return command;
-          }
-          case LayerCommandType.INSERT_BEFORE: {
-            this.layerManager.insertLayerBefore({
-              uuid: command.uuid,
-              destinationUuid: command.destinationUuid
-            });
-            return command;
-          }
-          default:
-            throw new Error('Layer command not supported');
-        }
-      })
+      map((command) => this.layerManager.execute(command))
     );
 
     this.commandHistory = new CommandHistory({
@@ -128,17 +89,21 @@ class ExecutionPipeline {
       layerCommand$
     });
 
-    drawCommand$.subscribe({
-      next: () => {
-        this.layerManager.updateLayerPreview();
-      }
-    });
+    this.subscriptions.push(
+      drawCommand$.subscribe({
+        next: () => {
+          this.layerManager.updateLayerPreview();
+        }
+      })
+    );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   cleanUp(): void {
     this.commandHistory.cleanUp();
-    console.info('clean up for execution pipeline called');
+
+    this.subscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
   }
 }
 

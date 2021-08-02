@@ -1,3 +1,4 @@
+import { Subscription } from 'rxjs';
 import { repeat } from 'rxjs/operators';
 import CommandGenerator from './command-generator';
 import EventManager from './event-manager';
@@ -34,6 +35,8 @@ class PixelDustEngine {
 
   executionPipeline: ExecutionPipeline;
 
+  subscriptions: Subscription[] = [];
+
   containerPosition = {
     x: 0,
     y: 0,
@@ -63,8 +66,6 @@ class PixelDustEngine {
 
     // Add canvas container to stage
     this.stage.appendChild(this.pixelDustCanvasContainer);
-    this.guideCanvas = new GuideCanvas(canvasType, dimension, this.pixelDustCanvasContainer);
-    this.previewCanvas = new PreviewCanvas(canvasType, dimension, this.pixelDustCanvasContainer);
 
     // Add stage to mount point
     this.mountTarget.appendChild(this.stage);
@@ -90,6 +91,9 @@ class PixelDustEngine {
       previewStream: this.eventManager.canvasPreview$
     });
 
+    this.guideCanvas = new GuideCanvas(canvasType, dimension, this.pixelDustCanvasContainer);
+    this.previewCanvas = new PreviewCanvas(canvasType, dimension, this.pixelDustCanvasContainer);
+
     // Initialize execution pipeline
     this.executionPipeline = new ExecutionPipeline({
       layerManager: this.layerManager,
@@ -98,33 +102,40 @@ class PixelDustEngine {
     });
 
     // use event manager move stream to deal with canvas move
-    this.eventManager.canvasMove$.pipe(repeat()).subscribe({
-      next: (arg) => {
-        const { x, y } = arg;
-        this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-x', String(x));
-        this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-y', String(y));
-      },
-      complete: () => {},
-      error: (error) => console.error(error)
-    });
+    this.subscriptions.push(
+      this.eventManager.canvasMove$.pipe(repeat()).subscribe({
+        next: (arg) => {
+          const { x, y } = arg;
+          this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-x', String(x));
+          this.pixelDustCanvasContainer?.style.setProperty('--stage-pos-y', String(y));
+        },
+        complete: () => {},
+        error: (error) => console.error(error)
+      })
+    );
 
     // use event manager scroll stream to deal with canvas scale
-    this.eventManager.canvasScale$.subscribe({
-      next: (arg) => {
-        this.pixelDustCanvasContainer?.style.setProperty('--stage-scale', String(arg.scale));
-      },
-      complete: () => {},
-      error: (error) => console.error(error)
-    });
+    this.subscriptions.push(
+      this.eventManager.canvasScale$.subscribe({
+        next: (arg) => {
+          this.pixelDustCanvasContainer?.style.setProperty('--stage-scale', String(arg.scale));
+        },
+        complete: () => {},
+        error: (error) => console.error(error)
+      })
+    );
   }
 
   cleanUp(): void {
-    // TODO Delete all DOM elements added by this lib
-
     this.layerManager?.cleanUp();
     this.commandGenerator?.cleanUp();
     this.executionPipeline?.cleanUp();
     this.eventManager?.cleanUp();
+
+    this.subscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
+    this.mountTarget.innerHTML = '';
   }
 }
 

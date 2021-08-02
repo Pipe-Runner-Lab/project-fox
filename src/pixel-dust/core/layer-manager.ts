@@ -1,6 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import PixelCanvas from '../canvas/pixel-canvas';
-import { LayerMetaData, CanvasType } from '../types/types';
+import {
+  LayerMetaData,
+  CanvasType,
+  LayerCommands,
+  LayerCommandType,
+  HistoryLayerCommands
+} from '../types/types';
 
 export type Layer = {
   pixelCanvas: PixelCanvas;
@@ -263,6 +269,52 @@ class LayerManager {
             hidden: _layer.hidden
           }))
         );
+    }
+  }
+
+  execute(command: LayerCommands): HistoryLayerCommands {
+    switch (command.type) {
+      case LayerCommandType.ADD_AFTER: {
+        const { uuid: generatedUuid } = this.addLayerAfter({
+          uuid: command.uuid
+        });
+        return { ...command, generatedUuid };
+      }
+      case LayerCommandType.ADD_BEFORE: {
+        console.log(command);
+        const { uuid: generatedUuid } = this.addLayerBefore({
+          uuid: command.uuid
+        });
+        return { ...command, generatedUuid };
+      }
+      case LayerCommandType.DELETE: {
+        this.deleteLayer({ uuid: command.uuid });
+        return command;
+      }
+      case LayerCommandType.HIDE: {
+        this.hideLayer({ uuid: command.uuid });
+        return command;
+      }
+      case LayerCommandType.SHOW: {
+        this.showLayer({ uuid: command.uuid });
+        return command;
+      }
+      case LayerCommandType.INSERT_AFTER: {
+        this.insertLayerAfter({
+          uuid: command.uuid,
+          destinationUuid: command.destinationUuid
+        });
+        return command;
+      }
+      case LayerCommandType.INSERT_BEFORE: {
+        this.insertLayerBefore({
+          uuid: command.uuid,
+          destinationUuid: command.destinationUuid
+        });
+        return command;
+      }
+      default:
+        throw new Error('Layer command not supported');
     }
   }
 
