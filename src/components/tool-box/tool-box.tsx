@@ -38,13 +38,15 @@ type ToolBoxProps = {
   onChangeBackgroundColor: React.Dispatch<React.SetStateAction<string>>;
   onChangeInstrument: React.Dispatch<React.SetStateAction<InstrumentType>>;
   instrument: InstrumentType;
+  onExport: () => Promise<void>;
 };
 
 function ToolBox({
   instrument,
   onChangeForegroundColor,
   onChangeBackgroundColor,
-  onChangeInstrument
+  onChangeInstrument,
+  onExport
 }: ToolBoxProps): JSX.Element {
   const [activeColorType, setActiveColorType] = useState<ActiveColorType>(
     ActiveColorType.FOREGROUND
@@ -96,7 +98,7 @@ function ToolBox({
           <input value="" placeholder="Name your art work..." />
         </NameContainer>
         <ButtonContainer>
-          <TextButton>
+          <TextButton onClick={onExport}>
             <ExportIcon />
             <span>Export</span>
           </TextButton>

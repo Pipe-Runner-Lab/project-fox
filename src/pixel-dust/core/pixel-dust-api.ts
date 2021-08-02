@@ -105,6 +105,10 @@ class PixelDustApi {
       ...arg
     });
   }
+
+  export(): Promise<void> {
+    return this.pixelDustEngine.layerManager.exportImage();
+  }
 }
 
 export { CanvasType, InstrumentType };

@@ -318,19 +318,12 @@ class LayerManager {
     }
   }
 
-  async updateLayerPreview(): Promise<void> {
-    const promiseArray = [];
+  async updateLayerPreview(uuid: string): Promise<void> {
+    const layer = this.layerStack.find((_layer) => _layer.uuid === uuid);
 
-    for (let idx = 0, { length } = this.layerStack; idx < length; idx += 1) {
-      const layer = this.layerStack[idx];
-      promiseArray.push(layer.pixelCanvas.getCanvasBlob());
-    }
-
-    const blobArray = await Promise.all(promiseArray);
-
-    for (let idx = 0, { length } = this.layerStack; idx < length; idx += 1) {
-      const layer = this.layerStack[idx];
-      layer.imagePreview = blobArray[idx] ? URL.createObjectURL(blobArray[idx]) : undefined;
+    if (layer) {
+      const blob = await layer.pixelCanvas.getCanvasBlob();
+      layer.imagePreview = URL.createObjectURL(blob);
     }
 
     if (this.layerStackUpdateCB)
@@ -341,6 +334,32 @@ class LayerManager {
           hidden: _layer.hidden
         }))
       );
+  }
+
+  async exportImage(name = 'my-project', format = 'img/png'): Promise<void> {
+    const exportCanvas = document.createElement('canvas');
+    exportCanvas.height = this.dimension;
+    exportCanvas.width = this.dimension;
+
+    const ctx = exportCanvas.getContext('2d');
+    this.layerStack.forEach((layer) => {
+      ctx?.drawImage(layer.pixelCanvas.canvas, 0, 0, this.dimension, this.dimension);
+    });
+
+    const generateBlob = new Promise((resolve) => {
+      exportCanvas.toBlob((blob) => {
+        resolve(blob);
+      }, format);
+    });
+
+    const blob = await generateBlob;
+
+    const imageUrl = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.setAttribute('download', name);
+    a.setAttribute('href', imageUrl);
+    a.click();
   }
 }
 

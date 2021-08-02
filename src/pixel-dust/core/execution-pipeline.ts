@@ -106,8 +106,8 @@ class ExecutionPipeline {
 
     this.subscriptions.push(
       drawCommand$.subscribe({
-        next: () => {
-          this.layerManager.updateLayerPreview();
+        next: (command) => {
+          this.layerManager.updateLayerPreview(command.activeLayerUuid);
         }
       })
     );

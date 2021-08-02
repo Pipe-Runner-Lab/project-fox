@@ -87,6 +87,10 @@ function DrawingBoard(): JSX.Element {
     [pixelDustReactRef]
   );
 
+  const exportFromEngine = useCallback(async () => {
+    return pixelDustReactRef.current?.pixelDustApi?.export();
+  }, []);
+
   return (
     <DrawingBoardContainer>
       <ToolBoxWrapper>
@@ -95,6 +99,7 @@ function DrawingBoard(): JSX.Element {
           onChangeInstrument={setActiveInstrument}
           onChangeForegroundColor={setActiveForegroundRGBA}
           onChangeBackgroundColor={setActiveBackgroundRGBA}
+          onExport={exportFromEngine}
         />
       </ToolBoxWrapper>
       <CanvasWrapper>

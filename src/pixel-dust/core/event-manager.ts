@@ -1,5 +1,5 @@
 import { fromEvent, Observable, concat } from 'rxjs';
-import { switchMap, filter, takeUntil, tap, map, first, takeWhile } from 'rxjs/operators';
+import { switchMap, filter, takeUntil, tap, map, first, takeWhile, finalize } from 'rxjs/operators';
 
 type EventManagerProps = {
   canvasContainerElement: HTMLDivElement;
@@ -68,6 +68,7 @@ class EventManager {
       first(),
       tap(() => {
         this.canvasMoveCache.isMoving = true;
+        options.canvasContainerElement.style.setProperty('cursor', 'grab');
       }),
       switchMap(() => {
         return concat(
@@ -98,20 +99,12 @@ class EventManager {
           y: nextY
         };
       }),
-      takeUntil(
-        spaceKeyUp$.pipe(
-          tap(() => {
-            this.canvasMoveCache.isMoving = false;
-          })
-        )
-      ),
-      takeUntil(
-        mouseUp$.pipe(
-          tap(() => {
-            this.canvasMoveCache.isMoving = false;
-          })
-        )
-      )
+      takeUntil(spaceKeyUp$),
+      takeUntil(mouseUp$),
+      finalize(() => {
+        this.canvasMoveCache.isMoving = false;
+        options.canvasContainerElement.style.setProperty('cursor', 'unset');
+      })
     );
 
     this.canvasScale$ = wheel$.pipe(
@@ -120,23 +113,23 @@ class EventManager {
         const prevScale = this.canvasScaleCache.scale;
 
         if (event.deltaY < 0) {
-          if (prevScale <= 0.7) {
+          if (prevScale >= 2) {
             return this.canvasScaleCache;
           }
 
           this.canvasScaleCache = {
-            scale: prevScale - 0.1
+            scale: prevScale + 0.1
           };
 
           return this.canvasScaleCache;
         }
 
-        if (prevScale >= 2) {
+        if (prevScale <= 0.7) {
           return this.canvasScaleCache;
         }
 
         this.canvasScaleCache = {
-          scale: prevScale + 0.1
+          scale: prevScale - 0.1
         };
 
         return this.canvasScaleCache;
