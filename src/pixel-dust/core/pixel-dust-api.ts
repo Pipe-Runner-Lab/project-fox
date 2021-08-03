@@ -15,10 +15,10 @@ class PixelDustApi {
 
   constructor({
     mountTarget,
-    dimension = 832,
+    dimension = 800,
     layerStackUpdateCB,
     activeLayerUpdateCB,
-    canvasType = CanvasType.X64,
+    canvasType = CanvasType.X100,
     initializeWithLayer = true
   }: PixelDustApiProps) {
     this.pixelDustEngine = new PixelDustEngine({ mountTarget, dimension, canvasType });

@@ -1,19 +1,37 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { PixelDustReact } from 'pixel-dust';
 import ToolBox from 'components/tool-box';
 import LayerBox from 'components/layer-box';
 import { InstrumentType, LayerMetaData } from 'pixel-dust/core/pixel-dust-api';
 import { useParams } from 'react-router';
+import { getDraftPainting } from 'services/painting';
+import Spinner from 'components/loading';
+import { AuthContext } from 'provider/auth';
 import {
   DrawingBoardContainer,
   CanvasWrapper,
   ToolBoxWrapper,
-  LayerBoxWrapper
+  LayerBoxWrapper,
+  LoadingContainer
 } from './drawing-board.styles';
 
 function DrawingBoard(): JSX.Element {
-  const { id } = useParams();
-  console.log('Project ID: ', id);
+  const { id: draftId } = useParams();
+  const { user } = useContext(AuthContext);
+  const [draftData, setDraftData] = useState(undefined);
+
+  useEffect(() => {
+    async function fetchDrawing(): Promise<void> {
+      if (draftId && user?.uid) {
+        const draft = await getDraftPainting(draftId, user.uid);
+        console.log(draft);
+      } else {
+        console.error('Draft not found');
+      }
+    }
+
+    fetchDrawing();
+  }, [draftId, user]);
 
   const pixelDustReactRef = useRef<PixelDustReact>(null);
 
@@ -90,6 +108,15 @@ function DrawingBoard(): JSX.Element {
   const exportFromEngine = useCallback(async () => {
     return pixelDustReactRef.current?.pixelDustApi?.export();
   }, []);
+
+  // if (!draftData) {
+  //   return (
+  //     <LoadingContainer>
+  //       <Spinner />
+  //       <div>Loading your draft...</div>
+  //     </LoadingContainer>
+  //   );
+  // }
 
   return (
     <DrawingBoardContainer>

@@ -2,7 +2,6 @@
 
 export enum CanvasType {
   X50 = 50,
-  X64 = 64,
   X100 = 100,
   X200 = 200,
   X500 = 500

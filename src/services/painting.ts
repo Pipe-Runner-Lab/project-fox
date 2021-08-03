@@ -24,13 +24,12 @@ export function createPainting(projectName: string, canvasType: string, dimensio
   return docID;
 }
 
-export function getDraftPainting(id: string): void {
-  const dbRef = db.collection('Painting-draft').doc(id);
-  dbRef.get().then((doc) => {
-    const data = doc.data();
-    if (data) {
-      return data;
-    }
-    return null;
-  });
+export async function getDraftPainting(draftId: string, userId: string): Promise<null | any> {
+  const dbRef = db.collection('Painting-draft').doc(draftId);
+  const doc = await dbRef.get();
+  const data = doc.data();
+  if (data) {
+    return data;
+  }
+  return null;
 }
