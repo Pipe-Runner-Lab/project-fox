@@ -1,5 +1,15 @@
 import { fromEvent, Observable, concat } from 'rxjs';
-import { switchMap, filter, takeUntil, tap, map, first, takeWhile, finalize } from 'rxjs/operators';
+import {
+  switchMap,
+  filter,
+  takeUntil,
+  tap,
+  map,
+  first,
+  takeWhile,
+  finalize,
+  mapTo
+} from 'rxjs/operators';
 
 type EventManagerProps = {
   canvasContainerElement: HTMLDivElement;
@@ -42,6 +52,8 @@ class EventManager {
     scale: number;
   }>;
 
+  undoStream$: Observable<void>;
+
   constructor(options: EventManagerProps) {
     this.targetElement = options.canvasContainerElement;
     this.containerElement = options.stage;
@@ -62,6 +74,17 @@ class EventManager {
     );
     const spaceKeyUp$ = fromEvent<KeyboardEvent>(window, 'keyup').pipe(
       filter((event: KeyboardEvent) => event.code === 'Space')
+    );
+
+    const ctrlKeyDown$ = fromEvent<KeyboardEvent>(window, 'keydown').pipe(
+      filter((event: KeyboardEvent) => event.code === 'ControlLeft')
+    );
+    const ctrlKeyUp$ = fromEvent<KeyboardEvent>(window, 'keyup').pipe(
+      filter((event: KeyboardEvent) => event.code === 'ControlLeft')
+    );
+
+    const zKeyDown$ = fromEvent<KeyboardEvent>(window, 'keydown').pipe(
+      filter((event: KeyboardEvent) => event.code === 'KeyZ')
     );
 
     this.canvasMove$ = spaceKeyDown$.pipe(
@@ -147,6 +170,12 @@ class EventManager {
       map((event: MouseEvent) => {
         return { x: event.offsetX, y: event.offsetY };
       })
+    );
+
+    this.undoStream$ = ctrlKeyDown$.pipe(
+      switchMap(() => zKeyDown$),
+      mapTo(undefined),
+      takeUntil(ctrlKeyUp$)
     );
   }
 

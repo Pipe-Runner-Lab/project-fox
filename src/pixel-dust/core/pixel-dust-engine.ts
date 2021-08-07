@@ -124,6 +124,17 @@ class PixelDustEngine {
         error: (error) => console.error(error)
       })
     );
+
+    // use event manager undo stream to deal with undo commands
+    this.subscriptions.push(
+      this.eventManager.undoStream$.subscribe({
+        next: () => {
+          this.executionPipeline.undo();
+        },
+        complete: () => {},
+        error: (error) => console.error(error)
+      })
+    );
   }
 
   cleanUp(): void {

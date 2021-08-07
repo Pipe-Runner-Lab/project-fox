@@ -119,20 +119,6 @@ export type EraserCommand = BaseCommand & {
 export type CanvasCommands = PenCommand | EraserCommand;
 
 /** Command History types */
-export type HistoryPenCommand = {
-  instrument: InstrumentType.PEN;
-  color: string;
-  activeLayerUuid: string;
-  cartesianArray: { x: number; y: number }[];
-};
-
-export type HistoryEraseCommand = {
-  instrument: InstrumentType.ERASER;
-  activeLayerUuid: string;
-  cartesianArray: { x: number; y: number }[];
-};
-
-// export type HistoryCommands = HistoryPenCommand | HistoryEraseCommand;
 
 export type HistoryCanvasCommands = {
   instrument: InstrumentType.PEN | InstrumentType.ERASER;

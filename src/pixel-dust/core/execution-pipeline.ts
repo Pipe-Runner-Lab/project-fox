@@ -113,6 +113,17 @@ class ExecutionPipeline {
     );
   }
 
+  undo(count = 1): void {
+    // find out type of command
+    const numberOfCommands = this.commandHistory.redoStack.length;
+    if (numberOfCommands >= 1) {
+      const lastCommand = this.commandHistory.redoStack[numberOfCommands - 1];
+      console.log(lastCommand);
+    } else {
+      throw Error('Undo cannot be performed');
+    }
+  }
+
   cleanUp(): void {
     this.commandHistory.cleanUp();
 

@@ -29,8 +29,10 @@ class PixelDustApi {
       throw Error('Could not set layer manager callbacks');
     }
     if (initializeWithLayer) {
-      const addedLayer = this.pixelDustEngine.layerManager.addLayerAfter();
-      if (addedLayer) this.pixelDustEngine.layerManager.setActiveLayer({ uuid: addedLayer.uuid });
+      this.addLayerAfter();
+      this.pixelDustEngine.layerManager.setActiveLayer({
+        uuid: this.pixelDustEngine.layerManager.layerStack[0].uuid
+      });
     }
   }
 
