@@ -5,20 +5,20 @@ import LayerBox from 'components/layer-box';
 import { InstrumentType, LayerMetaData } from 'pixel-dust/core/pixel-dust-api';
 import { useParams } from 'react-router';
 import { getDraftPainting } from 'services/painting';
-import Spinner from 'components/loading';
+// import Spinner from 'components/loading';
 import { AuthContext } from 'provider/auth';
 import {
   DrawingBoardContainer,
   CanvasWrapper,
   ToolBoxWrapper,
-  LayerBoxWrapper,
-  LoadingContainer
+  LayerBoxWrapper
+  // LoadingContainer
 } from './drawing-board.styles';
 
 function DrawingBoard(): JSX.Element {
   const { id: draftId } = useParams();
   const { user } = useContext(AuthContext);
-  const [draftData, setDraftData] = useState(undefined);
+  // const [draftData, setDraftData] = useState(undefined);
 
   useEffect(() => {
     async function fetchDrawing(): Promise<void> {

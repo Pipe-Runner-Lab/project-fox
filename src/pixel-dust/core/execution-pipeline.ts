@@ -113,6 +113,7 @@ class ExecutionPipeline {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   undo(count = 1): void {
     // find out type of command
     const numberOfCommands = this.commandHistory.redoStack.length;

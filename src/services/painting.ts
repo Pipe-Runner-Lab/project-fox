@@ -24,7 +24,8 @@ export function createPainting(projectName: string, canvasType: string, dimensio
   return docID;
 }
 
-export async function getDraftPainting(draftId: string, userId: string): Promise<null | any> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function getDraftPainting(draftId: string, userId: string): Promise<null | unknown> {
   const dbRef = db.collection('Painting-draft').doc(draftId);
   const doc = await dbRef.get();
   const data = doc.data();
