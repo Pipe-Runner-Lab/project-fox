@@ -45,6 +45,15 @@ class PreviewCanvas {
           this.tileDimension
         );
         break;
+      case InstrumentType.PIXEL_SQUARE:
+        this.ctx.fillStyle = command.color.replace(/[\d.]+\)$/g, '0.4)');
+        this.ctx.fillRect(
+          Math.round(command.x * this.tileDimension - 16),
+          Math.round(command.y * this.tileDimension - 16),
+          this.tileDimension * 5,
+          this.tileDimension * 5
+        );
+        break;
       case InstrumentType.ERASER:
         this.ctx.fillStyle = '#ffffff';
         this.ctx.fillRect(
@@ -67,6 +76,14 @@ class PreviewCanvas {
           Math.round(this.lastCommand.y * this.tileDimension),
           this.tileDimension,
           this.tileDimension
+        );
+        break;
+      case InstrumentType.PIXEL_SQUARE:
+        this.ctx.clearRect(
+          Math.round(this.lastCommand.x * this.tileDimension - 16),
+          Math.round(this.lastCommand.y * this.tileDimension - 16),
+          this.tileDimension * 5,
+          this.tileDimension * 5
         );
         break;
       case InstrumentType.ERASER:

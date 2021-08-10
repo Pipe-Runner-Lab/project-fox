@@ -3,6 +3,7 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import {
   CanvasType,
   PenCommand,
+  PixelSquareCommand,
   EraserCommand,
   InstrumentType,
   CanvasCommands,
@@ -47,6 +48,13 @@ class CommandGenerator {
               color: this.drawingState.foregroundColor,
               instrument: InstrumentType.PEN
             } as PenCommand;
+          case InstrumentType.PIXEL_SQUARE:
+            return {
+              x,
+              y,
+              color: this.drawingState.foregroundColor,
+              instrument: InstrumentType.PIXEL_SQUARE
+            } as PixelSquareCommand;
           case InstrumentType.ERASER:
             return {
               x,
@@ -88,6 +96,13 @@ class CommandGenerator {
               color: this.drawingState.foregroundColor,
               instrument: InstrumentType.PEN
             } as PenCommand;
+          case InstrumentType.PIXEL_SQUARE:
+            return {
+              x,
+              y,
+              color: this.drawingState.foregroundColor,
+              instrument: InstrumentType.PIXEL_SQUARE
+            } as PixelSquareCommand;
           case InstrumentType.ERASER:
             return {
               x,
