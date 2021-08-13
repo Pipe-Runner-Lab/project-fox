@@ -111,17 +111,23 @@ export type PenCommand = BaseCommand & {
   size?: number;
 };
 
+export type PixelSquareCommand = BaseCommand & {
+  instrument: InstrumentType.PIXEL_SQUARE;
+  color: string;
+  size?: number;
+};
+
 export type EraserCommand = BaseCommand & {
   instrument: InstrumentType.ERASER;
   size?: number;
 };
 
-export type CanvasCommands = PenCommand | EraserCommand;
+export type CanvasCommands = PenCommand | EraserCommand | PixelSquareCommand;
 
 /** Command History types */
 
 export type HistoryCanvasCommands = {
-  instrument: InstrumentType.PEN | InstrumentType.ERASER;
+  instrument: InstrumentType.PEN | InstrumentType.ERASER | InstrumentType.PIXEL_SQUARE;
   color: string | undefined;
   activeLayerUuid: string;
   cartesianArray: { x: number; y: number }[];

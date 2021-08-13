@@ -40,6 +40,15 @@ class PixelCanvas {
           this.tileDimension
         );
         break;
+      case InstrumentType.PIXEL_SQUARE:
+        this.ctx.fillStyle = command.color;
+        this.ctx.fillRect(
+          Math.round(command.x * this.tileDimension - 16),
+          Math.round(command.y * this.tileDimension - 16),
+          this.tileDimension * 5,
+          this.tileDimension * 5
+        );
+        break;
       case InstrumentType.ERASER:
         this.ctx.clearRect(
           Math.round(command.x * this.tileDimension),
